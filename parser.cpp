@@ -2,13 +2,16 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <set>
+#include <functional>
+#include <map>
+
 
 //Order of Operations: 
 // 1. Quantifiers/Negations (!, ?, ~)
 // 2. Conjunction (&)
 // 3. Disjunction (|)
 // 4. Implication/Equivalence ( =>, <=>)
-
 
 
 //
@@ -24,50 +27,52 @@ struct Node {
     NodeType type;
     std::string name; //for predicate names or variables
     std::vector<std::shared_ptr<Node>> children;
+    std::set<std::string> usedTerms;
 
     //Helper for Atoms: p(X, Y)
     Node(NodeType t, std::string n) : type(t), name(n) {}
+    
     //Helper for unary/binary
     Node(NodeType t, std::shared_ptr<Node> left, std::shared_ptr<Node> right = nullptr)
         : type(t) {
         children.push_back(left);
         if (right) children.push_back(right);
         }
+    
     //Quantifier Constructor
     Node(NodeType t, std::string n, std::shared_ptr<Node> body) 
         : type(t), name(n) {
         children.push_back(body);
     }
-        // Add to Node struct:
-    void print(int indent = 0) const {
-        // 1. Print indentation
-        for (int i = 0; i < indent; ++i) std::cout << "  ";
-
-        // 2. Print Node type and name
-        std::cout << "[" << nodeTypeToString(type) << "]";
-        if (!name.empty()) std::cout << ": " << name;
-        std::cout << "\n";
-
-        // 3. Recurse for children
-        for (const auto& child : children) {
-            if (child) child->print(indent + 1); // Step down one level
+    
+    std::string toString() const {
+        if(type == NodeType::ATOM){
+            if (children.empty()) return name;
+            std::string s = name + "(";
+            for(size_t i = 0; i < children.size(); ++i) {
+                s += children[i] -> toString();
+                if(i < children.size() - 1) s += ", ";
+            }
+            return s + ")";
         }
+        if (type == NodeType::NOT) return "~" + children[0]->toString();
+
+        std::string op = "";
+        if (type == NodeType::AND) op = " & ";
+        else if (type == NodeType:: OR) op = " | ";
+        else if (type == NodeType:: IMPLY) op = " =>";
+        else if (type == NodeType:: EQUIV) op = " <=> ";
+
+        if (op != ""){
+            return "(" + children[0]->toString() + op + children[1]->toString() + ")";
+        }
+
+        if (type == NodeType::FORALL) return "![ " + name + " ] : " + children[0]->toString();
+        if (type == NodeType::EXISTS) return "?[ " + name + " ] : " + children[0]->toString();
+
+        return "???";
     }
 
-    // You also need this helper function:
-    std::string nodeTypeToString(NodeType t) const {
-        switch (t) {
-            case NodeType::ATOM: return "ATOM";
-            case NodeType::NOT: return "NOT";
-            case NodeType::AND: return "AND";
-            case NodeType::OR: return "OR";
-            case NodeType::IMPLY: return "IMPLY";
-            case NodeType::EQUIV: return "EQUIV";
-            case NodeType::FORALL: return "FORALL";
-            case NodeType::EXISTS: return "EXISTS";
-            default: return "UNKNOWN";
-        }
-    }
 };
 
 //Lexer (Tokeniser)
@@ -256,18 +261,58 @@ struct Sequent {
     std::vector<std::shared_ptr<Node>> antecedent; //LHS
     std::vector<std::shared_ptr<Node>> succedent; //RHS
 
+    bool nodesAreEqual(std::shared_ptr<Node> n1, std::shared_ptr<Node> n2) const{
+        if(!n1 || !n2) return n1 == n2;
+        if(n1->type != n2->type || n1->name != n2->name) return false;
+        if(n1->children.size() != n2->children.size()) return false;
+        for(size_t i = 0; i < n1->children.size(); i++){
+            if(!nodesAreEqual(n1->children[i], n2->children[i])) return false;
+        }
+        return true;
+    }
+
     //check if atom exists on both sides (ID/closure)
     bool isClosed() const {
         for (const auto& a: antecedent) {
             if(a->type != NodeType::ATOM) continue;
             for (const auto& s : succedent) {
-                if (s->type == NodeType::ATOM && a->name == s->name) {
-                    if(a->children.size() == s->children.size()) return true;
+                if(s->type == NodeType::ATOM && nodesAreEqual(a, s)) return true;
                 }
             }
-        }
         return false;
     }
+
+    std::set<std::string> getExistingTerms() const{
+        std::set<std::string> terms;
+        std::function<void(std::shared_ptr<Node>)> find = [&](std::shared_ptr<Node> n){
+            if (n->type == NodeType::ATOM && n->children.empty()) {
+                terms.insert(n->name);
+            }
+            for (auto& child : n->children) find(child);
+        };
+        for (auto& f : antecedent) find(f);
+        for (auto& f : succedent) find(f);
+        return terms;
+    }
+
+
+    void print(int depth) const {
+        std::string indent = std::string(depth * 2, ' ');
+        std::string lhs = "";
+
+        //print antecedent
+        for (size_t i = 0; i < antecedent.size(); ++i){
+            lhs += antecedent[i]->toString() + (i == antecedent.size() - 1 ? "" : ", ");
+        }
+        
+        std::string rhs = "";
+        //print succedent
+        for (size_t i = 0; i < succedent.size(); i++){
+            rhs += succedent[i]->toString() + (i == succedent.size() - 1 ? "" : ", ");
+        }
+        std::cout << indent << (lhs.empty()? "" : lhs + " ") << " |- " << rhs << std::endl; //turnstile
+    }
+
 };
 
 //Prover
@@ -278,8 +323,9 @@ class Prover {
         return "t" + std::to_string(varCounter++);
     }
 public:
-    bool prove(Sequent s, int depth = 0){
-        
+    using UsedRegistry = std::map<std::shared_ptr<Node>, std::set<std::string>>;
+    bool prove(Sequent s, UsedRegistry used, int depth = 0){
+        s.print(depth);
         //--------------------------------------Closing Rules ---------------------------------------
         
         //Base case: ID
@@ -290,7 +336,7 @@ public:
         }
 
         //Limit Depth (prevent infinite loops)
-        if (depth > 20) return false;
+        if (depth > 50) return false;
 
         //--------------------------------------Non-Branching Rules ---------------------------------
         
@@ -302,7 +348,7 @@ public:
                 auto A = next.succedent[i]->children[0];
                 next.succedent.erase(next.succedent.begin() + i);
                 next.antecedent.push_back(A); //Move A to left
-                return prove(next, depth + 1);
+                return prove(next, used, depth + 1);
             }
         }
 
@@ -314,7 +360,7 @@ public:
                 auto A = next.antecedent[i]->children[0];
                 next.antecedent.erase(next.antecedent.begin() + i);
                 next.succedent.push_back(A); //Move A to right
-                return prove(next, depth + 1);
+                return prove(next, used, depth + 1);
             }
         }
 
@@ -328,7 +374,7 @@ public:
                 next.succedent.erase(next.succedent.begin() + i);
                 next.succedent.push_back(A);
                 next.succedent.push_back(B);
-                return prove(next, depth + 1);
+                return prove(next, used, depth + 1);
             }
         }
         
@@ -343,10 +389,25 @@ public:
                 next.succedent.erase(next.succedent.begin() + i);
                 next.antecedent.push_back(A);
                 next.succedent.push_back(B);
-                return prove(next, depth + 1);
+                return prove(next, used, depth + 1);
             }
         }
         
+        //AND on Left
+        for(size_t i = 0; i < s.antecedent.size(); ++i){
+            if(s.antecedent[i]->type == NodeType::AND) {
+                std::cout << std::string(depth, ' ') << "Applying AND_L " << std::endl;
+                Sequent next = s;
+                auto A = next.antecedent[i]->children[0];
+                auto B = next.antecedent[i]->children[1];
+                
+                next.antecedent.erase(next.antecedent.begin() + i);
+                next.antecedent.push_back(A);
+                next.antecedent.push_back(B);
+                return prove(next, used, depth + 1);
+            }
+        }
+
         //--------------------------------------Branching Rules--------------------------------------
         
         //AND on Right
@@ -365,7 +426,7 @@ public:
                 rightBranch.succedent.erase(rightBranch.succedent.begin() + i);
                 rightBranch.succedent.push_back(B);
 
-                return prove(leftBranch, depth + 1) && prove(rightBranch, depth + 1);
+                return prove(leftBranch, used, depth + 1) && prove(rightBranch, used, depth + 1);
             }
         }
         
@@ -384,7 +445,7 @@ public:
                 rightBranch.antecedent.erase(rightBranch.antecedent.begin() + i);
                 rightBranch.antecedent.push_back(B);
 
-                return prove(leftBranch, depth + 1) && prove(rightBranch, depth + 1);
+                return prove(leftBranch, used, depth + 1) && prove(rightBranch, used, depth + 1);
             }
         }
 
@@ -404,7 +465,7 @@ public:
                 rightBranch.antecedent.erase(rightBranch.antecedent.begin() + i);
                 rightBranch.antecedent.push_back(B);
 
-                return prove(leftBranch, depth + 1) && prove(rightBranch, depth + 1);        
+                return prove(leftBranch, used, depth + 1) && prove(rightBranch, used, depth + 1);        
             }
         }
 
@@ -422,7 +483,7 @@ public:
 
                 next.succedent.erase(next.succedent.begin() + i);
                 next.succedent.push_back(combined);
-                return prove(next, depth + 1);
+                return prove(next, used, depth + 1);
             }
         }
 
@@ -440,7 +501,7 @@ public:
 
                 next.antecedent.erase(next.antecedent.begin() + i);
                 next.antecedent.push_back(combined);
-                return prove(next, depth + 1);
+                return prove(next, used, depth + 1);
             }
         }
         
@@ -450,48 +511,64 @@ public:
         for(size_t i = 0; i < s.succedent.size(); ++i) {
             if(s.succedent[i]->type == NodeType::FORALL) {
                 std::cout << std::string(depth, ' ') << "Applying FORALL_R " << std::endl;
+                std::string termToUse = getFreshTerm();
                 Sequent next = s;
-                std::string fresh = getFreshTerm();
                 std::string varName = next.succedent[i]->name;
                 auto body = next.succedent[i]->children[0];
 
                 next.succedent.erase(next.succedent.begin() + i);
-                next.succedent.push_back(substitute(body, varName, fresh));
-                return prove(next, depth + 1);
+                next.succedent.push_back(substitute(body, varName, termToUse));
+                return prove(next, used, depth + 1);
             }
         }
         
         //FORALL Left
         for(size_t i = 0; i < s.antecedent.size(); i++) {
             if (s.antecedent[i]->type == NodeType::FORALL){
+                std::cout << std::string(depth, ' ') << "Applying FORALL_L " << std::endl;
+                
+                auto terms = s.getExistingTerms();
+                std::string termToUse = "";
+
+                for(const auto& t : terms){
+                    if (used[s.antecedent[i]].find(t) == used[s.antecedent[i]].end()){
+                        termToUse = t;
+                        break;
+                    }
+                }
+
+                if(termToUse == ""){
+                    termToUse = getFreshTerm();
+                }
+                used[s.antecedent[i]].insert(termToUse);
+
                 Sequent next = s;
-                std::string term = getFreshTerm();
                 std::string varName = next.antecedent[i]->name;
                 auto body = next.antecedent[i]->children[0];
-
-                auto substituted = substitute(body, varName, term);
+                auto substituted = substitute(body, varName, termToUse);
                 next.antecedent.push_back(substituted);
 
                 auto quantifier = next.antecedent[i];
                 next.antecedent.erase(next.antecedent.begin() + i);
                 next.antecedent.push_back(quantifier);
 
-                return prove(next, depth + 1);
+                return prove(next, used, depth + 1);
             }
         }
         
-        //EXISTS  on Left
+        //EXISTS on Left
         for(size_t i = 0; i < s.antecedent.size(); ++i) {
             if(s.antecedent[i]->type == NodeType::EXISTS) {
                 std::cout << std::string(depth, ' ') << "Applying EXSISTS_L " << std::endl;
+    
+                std::string termToUse = getFreshTerm();
                 Sequent next = s;
-                std::string fresh = getFreshTerm();
                 std::string varName = next.antecedent[i]->name;
                 auto body = next.antecedent[i]->children[0];
 
                 next.antecedent.erase(next.antecedent.begin() + i);
-                next.antecedent.push_back(substitute(body, varName, fresh));
-                return prove(next, depth + 1);
+                next.antecedent.push_back(substitute(body, varName, termToUse));
+                return prove(next, used, depth + 1);
             }
         }        
 
@@ -499,18 +576,34 @@ public:
         for(size_t i = 0; i < s.succedent.size(); i++) {
             if(s.succedent[i]->type == NodeType::EXISTS){
                 std::cout << std::string(depth, ' ') << "Applying EXISTS_R" << std::endl;
+                
+                auto terms = s.getExistingTerms();
+                std::string termToUse = "";
+
+                for(const auto& t : terms){
+                    if (used[s.succedent[i]].find(t) == used[s.succedent[i]].end()){
+                        termToUse = t;
+                        break;
+                    }
+                }
+
+                if(termToUse == ""){
+                    termToUse = getFreshTerm();
+                }
+                used[s.succedent[i]].insert(termToUse);
+                
+                
                 Sequent next = s;
-                std::string term = getFreshTerm();
                 std::string varName = next.succedent[i]->name;
                 auto body = next.succedent[i]->children[0];
 
-                next.succedent.push_back(substitute(body, varName, term));
+                next.succedent.push_back(substitute(body, varName, termToUse));
 
                 auto quantifier = next.succedent[i];
                 next.succedent.erase(next.succedent.begin() + i);
                 next.succedent.push_back(quantifier);
 
-                return prove(next, depth + 1);
+                return prove(next, used , depth + 1);
             }
         }
         
@@ -532,11 +625,12 @@ public:
         return newNode;
     }        
 };
+
 //-----------------------------------------------------------------------------
 int main(){
  
     // read input
-    std::string tptpTest = "fof(test, conjecture, ![X] : (p(X) => p(X))).";
+    std::string tptpTest = "fof(test, conjecture, (p(a) & ![X] : (p(X) => q(X))) => q(a)).";
     
     //1. lexing 
     Lexer lexer(tptpTest);
@@ -558,7 +652,6 @@ int main(){
         root = parser.parseTopLevel();
         
         std::cout << "--- ASCII Visualisation ---\n";
-        root->print();
 
     } catch (const std::exception& e) {
         std::cerr << "Parser Error: " << e.what() << std::endl;
@@ -569,8 +662,9 @@ int main(){
     Sequent initial;
     initial.succedent.push_back(root); //prove formula as conjecture
 
+    Prover::UsedRegistry used;
     Prover prover;
-    if (prover.prove(initial)) {
+    if (prover.prove(initial, used, 0)) {
         std::cout << "Success: Theorem Proved! \n";
     } else {
         std::cout << "Failure: Could not find proof.\n";
@@ -578,5 +672,3 @@ int main(){
 
     return 0;
 }
-
-
