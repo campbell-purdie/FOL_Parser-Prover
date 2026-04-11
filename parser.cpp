@@ -5,6 +5,7 @@
 #include <set>
 #include <functional>
 #include <map>
+#include <fstream>
 
 
 //Order of Operations: 
@@ -191,14 +192,20 @@ public:
         }
         return body;
     }
-    std::shared_ptr<Node> parseTopLevel() {
-        match(Token::FOF); match(Token::LPAREN);
-        std::string name = match(Token::ID).value; match(Token::COMMA);
-        std::string role = match(Token::ID).value; match(Token::COMMA);
+    std::shared_ptr<Node> parseTopLevel(std::string& outRole) {
+        match(Token::FOF); 
+        match(Token::LPAREN);
+        
+        std::string name = match(Token::ID).value;  
+        match(Token::COMMA);
+        
+        std::string role = match(Token::ID).value; 
+        match(Token::COMMA);
 
         auto formula = parseFormula();
 
-        match(Token::RPAREN); match(Token::PERIOD);
+        match(Token::RPAREN); 
+        match(Token::PERIOD);
         return formula;
     } 
     //Parsing Quantifiers
@@ -251,6 +258,9 @@ public:
         }
         return node;
         };
+    bool isAtEnd() const {
+        return tokens[current].type == Token::END;
+    }
 };
 
 //--------------------------------ALGORITHM------------------------------------
@@ -666,17 +676,30 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-int main(){
- 
-    // read input
-    std::string tptpTest = "fof(test, conjecture, (p(a) & ![X] : (p(X) => q(X))) => q(a)).";
-    
-    //1. lexing 
-    Lexer lexer(tptpTest);
+int main(int argc, char* argv[]) {
+    if (argc < 2){
+        std::cerr << "Usage: " << argv[0] << " <tptp_file_path>" << std::endl;
+        return 1;
+    }
+
+    std::ifstream file(argv[1]);
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file " << argv[1] << std::endl;
+        return 1;
+    }
+
+    std::string line, content;
+    Sequent initial;
+
+    while (std::getline(file, line)){
+        if(line.empty() || line[0] == '%') continue;
+        content += line;
+    }
+
+    Lexer lexer(content);
     std::vector<Token> tokens;
-    Token t;
-    std::shared_ptr<Node> root;
     try {
+        Token t;
         do {
             t = lexer.nextToken();
             tokens.push_back(t);
@@ -685,29 +708,32 @@ int main(){
         std::cerr << "Lexer Error: " << e.what() << std::endl;
         return 1;
     }
-    //2. parsing 
+
     try {
         Parser parser(tokens);
-        root = parser.parseTopLevel();
-        
-        std::cout << "--- ASCII Visualisation ---\n";
+        while (!parser.isAtEnd()) {
+            std::string role;
+            std::shared_ptr<Node> formula = parser.parseTopLevel(role);
 
+            if (role == "axiom") {
+                initial.antecedent.push_back(formula);
+            } else if (role == "conjecture") {
+                initial.succedent.push_back(formula);
+            }
+        }
     } catch (const std::exception& e) {
         std::cerr << "Parser Error: " << e.what() << std::endl;
         return 1;
     }
-    
-    //3. Algorithm 2
-    Sequent initial;
-    initial.succedent.push_back(root); //prove formula as conjecture
-
+    std::cout << "--- Starting Proof Search ---" << std::endl;
     Prover::UsedRegistry used;
     Prover prover;
-    if (prover.prove(initial, used, 0)) {
-        std::cout << "Success: Theorem Proved! \n";
-    } else {
-        std::cout << "Failure: Could not find proof.\n";
-    }
 
+    if(prover.prove(initial, used, 0)) {
+        std::cout << "\nSuccess: Theorem Proved!" << std::endl;
+    } else {
+        std::cout << "\nFailure: Could not find proof." << std::endl;
+    }
+    
     return 0;
 }
