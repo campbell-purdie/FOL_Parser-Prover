@@ -96,6 +96,19 @@ public:
         while(pos < input.length() && isspace(input[pos])) pos++;
         if(pos >= input.length()) return { Token::END, ""};
         
+        if (isdigit(input[pos])) {
+            std::string val;
+            while (pos < input.length() && isdigit(input[pos])) {
+                val += input[pos++];
+            }
+            return {Token::ID, val}; // Treat numbers as IDs for simplicity
+        }
+
+        if(pos < input.length() && input[pos] == '%') {
+            while(pos < input.length() && input[pos] != '\n') pos++;
+            return nextToken(); // recurse to get the next real token
+        }
+
         //check multi-char symbols
         if(pos + 2 < input.length() && input.substr(pos, 3) == "<=>"){
             pos += 3;
@@ -196,10 +209,11 @@ public:
         match(Token::FOF); 
         match(Token::LPAREN);
         
-        std::string name = match(Token::ID).value;  
+        if (peek().type == Token::ID || peek().type == Token::VAR) advance();
         match(Token::COMMA);
         
-        std::string role = match(Token::ID).value; 
+        Token roleTok = match(Token::ID); 
+        outRole = roleTok.value;
         match(Token::COMMA);
 
         auto formula = parseFormula();
@@ -305,7 +319,7 @@ struct Sequent {
         return terms;
     }
 
-
+/** 
     void print(int depth) const {
         for(int i = 0; i < depth; i++){ 
             std::cout << "| ";}
@@ -324,6 +338,7 @@ struct Sequent {
         }
         std::cout << (lhs.empty()? "" : lhs + " ") << " |- " << rhs << std::endl; //turnstile
     }
+    **/
 };
 
 //Prover
@@ -334,30 +349,36 @@ class Prover {
         return "t" + std::to_string(varCounter++);
     }
 public:
+    //bool verbose = false;
     using UsedRegistry = std::map<std::shared_ptr<Node>, std::set<std::string>>;
     bool prove(Sequent s, UsedRegistry used, int depth = 0){
-        s.print(depth);
+        //s.print(depth);
         //--------------------------------------Closing Rules ---------------------------------------
         
         //Base case: ID
         if(s.isClosed()){
-            for(int k = 0; k < depth; k++) std::cout << "| ";
-            std::cout << "Applying ID " << std::endl;
-            for(int k = 0; k < depth; k++) std::cout << "| ";
-            std::cout << ">>> Branch Closed (Identity)\n";
+            //for(int k = 0; k < depth; k++) std::cout << "| ";
+            //std::cout << "Applying ID " << std::endl;
+            //for(int k = 0; k < depth; k++) std::cout << "| ";
+            //std::cout << ">>> Branch Closed (Identity)\n";
             return true;
         }
 
+                // Base case: ⊥L (false on the left closes the branch)
+        for (const auto& a : s.antecedent) {
+            if (a->type == NodeType::ATOM && a->name == "false") return true;
+        }
+
         //Limit Depth (prevent infinite loops)
-        if (depth > 50) return false;
+        if (depth > 1000) return false;
 
         //--------------------------------------Non-Branching Rules ---------------------------------
         
         //AND on Left
         for(size_t i = 0; i < s.antecedent.size(); ++i){
             if(s.antecedent[i]->type == NodeType::AND) {
-                for(int k = 0; k < depth; k++) std::cout << "| ";
-                std::cout << "Applying AND_L " << std::endl;
+                //for(int k = 0; k < depth; k++) std::cout << "| ";
+                //std::cout << "Applying AND_L " << std::endl;
 
                 Sequent next = s;
                 auto A = next.antecedent[i]->children[0];
@@ -373,8 +394,8 @@ public:
         //OR on Right
         for (size_t i = 0; i < s.succedent.size(); i++) {
             if(s.succedent[i]->type == NodeType::OR) {
-                for(int k = 0; k < depth; k++) std::cout << "| ";
-                std::cout << "Applying OR_R " << std::endl;
+                //for(int k = 0; k < depth; k++) std::cout << "| ";
+                //std::cout << "Applying OR_R " << std::endl;
                 Sequent next = s;
                 auto A = next.succedent[i]->children[0];
                 auto B = next.succedent[i]->children[1];
@@ -388,8 +409,8 @@ public:
         //IMPLY on Right
         for(size_t i = 0; i < s.succedent.size(); ++i){
             if(s.succedent[i]->type == NodeType::IMPLY) {
-                for(int k = 0; k < depth; k++) std::cout << "| ";
-                std::cout << "Applying IMPLY_R " << std::endl;
+                //for(int k = 0; k < depth; k++) std::cout << "| ";
+                //std::cout << "Applying IMPLY_R " << std::endl;
                 Sequent next = s;
                 auto A = next.succedent[i]->children[0];
                 auto B = next.succedent[i]->children[1];
@@ -403,8 +424,8 @@ public:
         //NEGATION on Left
         for (size_t i = 0; i < s.antecedent.size(); i++) {
             if(s.antecedent[i]->type == NodeType::NOT) {
-                for(int k = 0; k < depth; k++) std::cout << "| ";
-                std::cout << "Applying NEGATE_L " << std::endl;
+                //for(int k = 0; k < depth; k++) std::cout << "| ";
+                //std::cout << "Applying NEGATE_L " << std::endl;
                 Sequent next = s;
                 auto A = next.antecedent[i]->children[0];
                 next.antecedent.erase(next.antecedent.begin() + i);
@@ -416,8 +437,8 @@ public:
         //NEGATION on Right 
         for (size_t i = 0; i < s.succedent.size(); i++) {
             if(s.succedent[i]->type == NodeType::NOT) {
-                for(int k = 0; k < depth; k++) std::cout << "| ";
-                std::cout << "Applying NEGATE_R " << std::endl;
+                //for(int k = 0; k < depth; k++) std::cout << "| ";
+                //std::cout << "Applying NEGATE_R " << std::endl;
                 Sequent next = s;
                 auto A = next.succedent[i]->children[0];
                 next.succedent.erase(next.succedent.begin() + i);
@@ -429,8 +450,8 @@ public:
         //FORALL Right
         for(size_t i = 0; i < s.succedent.size(); ++i) {
             if(s.succedent[i]->type == NodeType::FORALL) {
-                for(int k = 0; k < depth; k++) std::cout << "| ";
-                std::cout << "Applying FORALL_R " << std::endl;
+                //for(int k = 0; k < depth; k++) std::cout << "| ";
+                //std::cout << "Applying FORALL_R " << std::endl;
                 std::string termToUse = getFreshTerm();
                 Sequent next = s;
                 std::string varName = next.succedent[i]->name;
@@ -445,8 +466,8 @@ public:
         //EXISTS on Left
         for(size_t i = 0; i < s.antecedent.size(); ++i) {
             if(s.antecedent[i]->type == NodeType::EXISTS) {
-                for(int k = 0; k < depth; k++) std::cout << "| ";
-                std::cout << "Applying EXISTS_L " << std::endl;
+                //for(int k = 0; k < depth; k++) std::cout << "| ";
+                //std::cout << "Applying EXISTS_L " << std::endl;
     
                 std::string termToUse = getFreshTerm();
                 Sequent next = s;
@@ -459,166 +480,11 @@ public:
             }
         }        
 
-
-        //--------------------------------------Branching Rules--------------------------------------
-        
-        //AND on Right
-        for (size_t i = 0; i < s.succedent.size(); i++){
-            if(s.succedent[i]->type == NodeType::AND){
-                for(int k = 0; k < depth; k++) std::cout << "| ";
-                std::cout << "==> Branching: Applying AND_R " << std::endl;
-                Sequent leftBranch = s;
-                Sequent rightBranch = s;
-
-                auto A = s.succedent[i]->children[0];
-                auto B = s.succedent[i]->children[1];
-
-                leftBranch.succedent.erase(leftBranch.succedent.begin() + i);
-                leftBranch.succedent.push_back(A);
-
-                rightBranch.succedent.erase(rightBranch.succedent.begin() + i);
-                rightBranch.succedent.push_back(B);
-               
-                bool leftSuccess = prove(leftBranch, used, depth + 1);
-                if (leftSuccess){
-                    for(int k = 0; k < depth; k++) std::cout << "| ";
-                    std::cout << "--- Left Branch Closed, checking Right Branch ---" << std::endl;
-                    return prove(rightBranch, used, depth + 1);
-                }
-                return false;
-            }
-        }
-        
-        //OR on Left
-        for (size_t i = 0; i < s.antecedent.size(); i++){
-            if(s.antecedent[i]->type == NodeType::OR){
-                for(int k = 0; k < depth; k++) std::cout << "| ";
-                std::cout << "==> Branching: Applying OR_L " << std::endl;
-                Sequent leftBranch = s;
-                Sequent rightBranch = s;
-                auto A = s.antecedent[i]->children[0];
-                auto B = s.antecedent[i]->children[1];
-
-                leftBranch.antecedent.erase(leftBranch.antecedent.begin() + i);
-                leftBranch.antecedent.push_back(A);
-
-                rightBranch.antecedent.erase(rightBranch.antecedent.begin() + i);
-                rightBranch.antecedent.push_back(B);
-
-                
-                bool leftSuccess = prove(leftBranch, used, depth + 1);
-                if (leftSuccess){
-                    for(int k = 0; k < depth; k++) std::cout << "| ";
-                    std::cout <<  "--- Left Branch Closed, checking Right Branch ---" << std::endl;
-                    return prove(rightBranch, used, depth + 1);
-                }
-                return false;
-            }
-        }
-
-        //IMPLY on Left
-        for (size_t i = 0; i < s.antecedent.size(); i++){
-            if(s.antecedent[i]->type == NodeType::IMPLY){
-                for(int k = 0; k < depth; k++) std::cout << "| ";
-                std::cout << "==> Branching: Applying IMPLY_L " << std::endl;
-                Sequent leftBranch = s;
-                Sequent rightBranch = s;
-
-                auto A = s.antecedent[i]->children[0];
-                auto B = s.antecedent[i]->children[1];
-
-                leftBranch.antecedent.erase(leftBranch.antecedent.begin() + i);
-                leftBranch.succedent.push_back(A);
-
-                rightBranch.antecedent.erase(rightBranch.antecedent.begin() + i);
-                rightBranch.antecedent.push_back(B);
-
-                bool leftSuccess = prove(leftBranch, used, depth + 1);
-                if (leftSuccess){
-                    for(int k = 0; k < depth; k++) std::cout << "| ";
-                    std::cout << "--- Left Branch Closed, checking Right Branch ---" << std::endl;
-                    return prove(rightBranch, used, depth + 1);
-                }
-                return false;
-            }
-        }
-
-        //------------------------------------------------------------------------------------------
-        //FORALL Left
-        for(size_t i = 0; i < s.antecedent.size(); i++) {
-            if (s.antecedent[i]->type == NodeType::FORALL){
-                for(int k = 0; k < depth; k++) std::cout << "| ";
-                std::cout << "Applying FORALL_L " << std::endl;
-                
-                auto terms = s.getExistingTerms();
-                std::string termToUse = "";
-
-                for(const auto& t : terms){
-                    if (used[s.antecedent[i]].find(t) == used[s.antecedent[i]].end()){
-                        termToUse = t;
-                        break;
-                    }
-                }
-
-                if(termToUse == ""){
-                    termToUse = getFreshTerm();
-                }
-                used[s.antecedent[i]].insert(termToUse);
-
-                Sequent next = s;
-                std::string varName = next.antecedent[i]->name;
-                auto body = next.antecedent[i]->children[0];
-                auto substituted = substitute(body, varName, termToUse);
-                next.antecedent.push_back(substituted);
-
-                auto quantifier = next.antecedent[i];
-                next.antecedent.erase(next.antecedent.begin() + i);
-                next.antecedent.push_back(quantifier);
-
-                return prove(next, used, depth + 1);
-            }
-        }
-
-        //EXISTS Right
-        for(size_t i = 0; i < s.succedent.size(); i++) {
-            if(s.succedent[i]->type == NodeType::EXISTS){
-                for(int k = 0; k < depth; k++) std::cout << "| ";
-                std::cout << "Applying EXISTS_R " << std::endl;
-                auto terms = s.getExistingTerms();
-                std::string termToUse = "";
-
-                for(const auto& t : terms){
-                    if (used[s.succedent[i]].find(t) == used[s.succedent[i]].end()){
-                        termToUse = t;
-                        break;
-                    }
-                }
-
-                if(termToUse == ""){
-                    termToUse = getFreshTerm();
-                }
-                used[s.succedent[i]].insert(termToUse);
-                
-                
-                Sequent next = s;
-                std::string varName = next.succedent[i]->name;
-                auto body = next.succedent[i]->children[0];
-
-                next.succedent.push_back(substitute(body, varName, termToUse));
-
-                auto quantifier = next.succedent[i];
-                next.succedent.erase(next.succedent.begin() + i);
-                next.succedent.push_back(quantifier);
-
-                return prove(next, used , depth + 1);
-            }
-        }
-        
-        //EQUIVALENT on Right
+                //EQUIVALENT on Right
         for(size_t i = 0; i < s.succedent.size(); i++){
             if(s.succedent[i]->type == NodeType::EQUIV) {
-                for(int k = 0; k < depth; k++) std::cout << "| ";
-                std::cout << "Expanding EQUIVALENT_R " << std::endl;
+                //for(int k = 0; k < depth; k++) std::cout << "| ";
+                //std::cout << "Expanding EQUIVALENT_R " << std::endl;
                 Sequent next = s;
                 auto A = s.succedent[i]->children[0];
                 auto B = s.succedent[i]->children[1];
@@ -636,8 +502,8 @@ public:
         //EQUIVALENT on Left
         for(size_t i = 0; i < s.antecedent.size(); i++){
             if(s.antecedent[i]->type == NodeType::EQUIV) {
-                for(int k = 0; k < depth; k++) std::cout << "| ";
-                std::cout << "Expanding EQUIVALENT_L " << std::endl;
+                //for(int k = 0; k < depth; k++) std::cout << "| ";
+                //std::cout << "Expanding EQUIVALENT_L " << std::endl;
                 Sequent next = s;
                 auto A = s.antecedent[i]->children[0];
                 auto B = s.antecedent[i]->children[1];
@@ -652,10 +518,175 @@ public:
             }
         }
         
-   
 
+        //--------------------------------------Branching Rules--------------------------------------
+        
+        //AND on Right
+        for (size_t i = 0; i < s.succedent.size(); i++){
+            if(s.succedent[i]->type == NodeType::AND){
+                //for(int k = 0; k < depth; k++) std::cout << "| ";
+                //std::cout << "==> Branching: Applying AND_R " << std::endl;
+                Sequent leftBranch = s;
+                Sequent rightBranch = s;
 
+                auto A = s.succedent[i]->children[0];
+                auto B = s.succedent[i]->children[1];
 
+                leftBranch.succedent.erase(leftBranch.succedent.begin() + i);
+                leftBranch.succedent.push_back(A);
+
+                rightBranch.succedent.erase(rightBranch.succedent.begin() + i);
+                rightBranch.succedent.push_back(B);
+               
+                bool leftSuccess = prove(leftBranch, used, depth + 1);
+                if (leftSuccess){
+                    //for(int k = 0; k < depth; k++) std::cout << "| ";
+                    //std::cout << "--- Left Branch Closed, checking Right Branch ---" << std::endl;
+                    return prove(rightBranch, used, depth + 1);
+                }
+                return false;
+            }
+        }
+        
+        //OR on Left
+        for (size_t i = 0; i < s.antecedent.size(); i++){
+            if(s.antecedent[i]->type == NodeType::OR){
+                //for(int k = 0; k < depth; k++) std::cout << "| ";
+                //std::cout << "==> Branching: Applying OR_L " << std::endl;
+                Sequent leftBranch = s;
+                Sequent rightBranch = s;
+                auto A = s.antecedent[i]->children[0];
+                auto B = s.antecedent[i]->children[1];
+
+                leftBranch.antecedent.erase(leftBranch.antecedent.begin() + i);
+                leftBranch.antecedent.push_back(A);
+
+                rightBranch.antecedent.erase(rightBranch.antecedent.begin() + i);
+                rightBranch.antecedent.push_back(B);
+
+                
+                bool leftSuccess = prove(leftBranch, used, depth + 1);
+                if (leftSuccess){
+                    //for(int k = 0; k < depth; k++) std::cout << "| ";
+                    //std::cout <<  "--- Left Branch Closed, checking Right Branch ---" << std::endl;
+                    return prove(rightBranch, used, depth + 1);
+                }
+                return false;
+            }
+        }
+
+        //IMPLY on Left
+        for (size_t i = 0; i < s.antecedent.size(); i++){
+            if(s.antecedent[i]->type == NodeType::IMPLY){
+                //for(int k = 0; k < depth; k++) std::cout << "| ";
+                //std::cout << "==> Branching: Applying IMPLY_L " << std::endl;
+                Sequent leftBranch = s;
+                Sequent rightBranch = s;
+
+                auto A = s.antecedent[i]->children[0];
+                auto B = s.antecedent[i]->children[1];
+
+                leftBranch.antecedent.erase(leftBranch.antecedent.begin() + i);
+                leftBranch.succedent.push_back(A);
+
+                rightBranch.antecedent.erase(rightBranch.antecedent.begin() + i);
+                rightBranch.antecedent.push_back(B);
+
+                bool leftSuccess = prove(leftBranch, used, depth + 1);
+                if (leftSuccess){
+                    //for(int k = 0; k < depth; k++) std::cout << "| ";
+                    //std::cout << "--- Left Branch Closed, checking Right Branch ---" << std::endl;
+                    return prove(rightBranch, used, depth + 1);
+                }
+                return false;
+            }
+        }
+
+        //------------------------------------------------------------------------------------------
+        //FORALL Left
+        for(size_t i = 0; i < s.antecedent.size(); i++) {
+            if (s.antecedent[i]->type == NodeType::FORALL){
+                auto terms = s.getExistingTerms();
+                std::string termToUse = "";
+
+                for(const auto& t : terms){
+                    if (used[s.antecedent[i]].find(t) == used[s.antecedent[i]].end()){
+                        termToUse = t;
+                        break;
+                    }
+                }
+                if (termToUse == "") continue; // no unused term, skip for now
+
+                used[s.antecedent[i]].insert(termToUse);
+                Sequent next = s;
+                std::string varName = next.antecedent[i]->name;
+                auto body = next.antecedent[i]->children[0];
+                next.antecedent.push_back(substitute(body, varName, termToUse));
+                auto quantifier = next.antecedent[i];
+                next.antecedent.erase(next.antecedent.begin() + i);
+                next.antecedent.push_back(quantifier);
+                return prove(next, used, depth + 1);
+            }
+        }
+
+        // FORALL-L: no unused terms exist, create a fresh term (last resort)
+        for(size_t i = 0; i < s.antecedent.size(); i++) {
+            if (s.antecedent[i]->type == NodeType::FORALL){
+                std::string termToUse = getFreshTerm();
+                used[s.antecedent[i]].insert(termToUse);
+                Sequent next = s;
+                std::string varName = next.antecedent[i]->name;
+                auto body = next.antecedent[i]->children[0];
+                next.antecedent.push_back(substitute(body, varName, termToUse));
+                auto quantifier = next.antecedent[i];
+                next.antecedent.erase(next.antecedent.begin() + i);
+                next.antecedent.push_back(quantifier);
+                return prove(next, used, depth + 1);
+            }
+        }
+
+        // EXISTS-R: instantiate with existing unused term
+        for(size_t i = 0; i < s.succedent.size(); i++) {
+            if(s.succedent[i]->type == NodeType::EXISTS){
+                auto terms = s.getExistingTerms();
+                std::string termToUse = "";
+
+                for(const auto& t : terms){
+                    if (used[s.succedent[i]].find(t) == used[s.succedent[i]].end()){
+                        termToUse = t;
+                        break;
+                    }
+                }
+                if (termToUse == "") continue; // no unused term, skip for now
+
+                used[s.succedent[i]].insert(termToUse);
+                Sequent next = s;
+                std::string varName = next.succedent[i]->name;
+                auto body = next.succedent[i]->children[0];
+                next.succedent.push_back(substitute(body, varName, termToUse));
+                auto quantifier = next.succedent[i];
+                next.succedent.erase(next.succedent.begin() + i);
+                next.succedent.push_back(quantifier);
+                return prove(next, used, depth + 1);
+            }
+        }
+
+        // EXISTS-R: no unused terms exist, create a fresh term (last resort)
+        for(size_t i = 0; i < s.succedent.size(); i++) {
+            if(s.succedent[i]->type == NodeType::EXISTS){
+                std::string termToUse = getFreshTerm();
+                used[s.succedent[i]].insert(termToUse);
+                Sequent next = s;
+                std::string varName = next.succedent[i]->name;
+                auto body = next.succedent[i]->children[0];
+                next.succedent.push_back(substitute(body, varName, termToUse));
+                auto quantifier = next.succedent[i];
+                next.succedent.erase(next.succedent.begin() + i);
+                next.succedent.push_back(quantifier);
+                return prove(next, used, depth + 1);
+            }
+        }
+        
         return false; //no rules to close branch
     }
 
@@ -693,7 +724,7 @@ int main(int argc, char* argv[]) {
 
     while (std::getline(file, line)){
         if(line.empty() || line[0] == '%') continue;
-        content += line;
+        content += line + "\n"; // ← preserve newlines so inline % comments terminate
     }
 
     Lexer lexer(content);
@@ -714,17 +745,23 @@ int main(int argc, char* argv[]) {
         while (!parser.isAtEnd()) {
             std::string role;
             std::shared_ptr<Node> formula = parser.parseTopLevel(role);
-
-            if (role == "axiom") {
-                initial.antecedent.push_back(formula);
-            } else if (role == "conjecture") {
-                initial.succedent.push_back(formula);
+            if(formula){
+                if (role == "axiom" || role == "hypothesis") {
+                    initial.antecedent.push_back(formula);
+                } else if (role == "conjecture") {
+                    initial.succedent.push_back(formula);
+                } else {
+                    initial.antecedent.push_back(formula);
+                }
+                std::cout << "Parsed " << role << " successfully." << std::endl;
             }
         }
+        std::cout << "Total Axioms: " << initial.antecedent.size() << std::endl;
     } catch (const std::exception& e) {
         std::cerr << "Parser Error: " << e.what() << std::endl;
         return 1;
     }
+
     std::cout << "--- Starting Proof Search ---" << std::endl;
     Prover::UsedRegistry used;
     Prover prover;
