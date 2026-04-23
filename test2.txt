@@ -1,0 +1,53 @@
+%LCL230+1
+fof(pel5,conjecture,
+    ( ( ( p
+        | q )
+     => ( p
+        | r ) )
+   => ( p
+      | ( q
+       => r ) ) ) ).
+
+%LCL679+1
+fof(main,conjecture,
+    ~ ? [X] :
+        ~ ( $false
+          | $false ) ).
+
+%SYN041+1
+fof(pel3,conjecture,
+    ( ~ ( p
+       => q )
+   => ( q
+     => p ) ) ).
+
+%SYN387+1
+fof(pel6,conjecture,
+    ( p
+    | ~ p ) ).
+
+%SYN388+1
+fof(pel7,conjecture,
+    ( p
+    | ~ ~ ~ p ) ).
+
+%SYN389+1
+fof(pel8,conjecture,
+    ( ( ( p
+       => q )
+     => p )
+   => p ) ).
+
+%SYN391+1
+fof(pel9,conjecture,
+    ( ( ( p1
+        | p2 )
+      & ( ~ p1
+        | p2 )
+      & ( p1
+        | ~ p2 ) )
+   => ~ ( ~ p1
+        | ~ p2 ) ) ).
+
+fof(main, conjecture, 
+    (p(a) => ?[X]: p(X))).

@@ -1,11 +1,119 @@
+% Easy
+fof(easy1, conjecture, (p => p)).
+
+fof(easy2, conjecture, ((p & q) => p)).
+
+fof(easy3, conjecture, (p | ~p)).
+
+fof(easy4, conjecture, (p => ~~p)).
+
+fof(easy5, conjecture, (p(a) => ?[X] : p(X))).
+
+fof(easy6, conjecture, (![X] : p(X) => p(a))).
+
+fof(identity_implication, conjecture, (((p => q) & (q => r)) => (p => r))).
+
+fof(double_negation, conjecture, (p => ~~p)).
+
+fof(simple_existential, conjecture, (p(a) => ?[X] : p(X))).
+
+fof(universal_instantiation, conjecture, (![X] : p(X) => p(a))).
+
+
+% Medium
+fof(med1, conjecture, ((p => q) => (~q => ~p))).
+
+fof(med2, conjecture, (((p | q) & ~p) => q)).
+
+fof(med3, conjecture, (((p => q) & (q => r)) => (p => r))).
+
+fof(med4, conjecture, (~(![X] : p(X)) => (?[X] : ~p(X)))).
+
+fof(med5, conjecture, (![X] : (p(X) & q(X)) => (![X] : p(X) & ![X] : q(X)))).
+
+fof(med6, conjecture, (![X] : (p(X) => q(X)) => (![X] : p(X) => ![X] : q(X)))).
+
+fof(med7, conjecture, (?[X] : (p(X) => ![Y] : p(Y)))).
+
+fof(pelletier_21, conjecture, (((p => q) & (m => n) & (p | m)) => (q | n))).
+
+fof(de_morgan_quantifier, conjecture, (~(![X] : p(X)) => (?[X] : ~p(X)))).
+
+fof(quantifier_dist_and, conjecture, (![X] : (p(X) & q(X)) => (![X] : p(X) & ![X] : q(X)))).
+
+fof(quantifier_monotonicity, conjecture, (![X] : (p(X) => q(X)) => (![X] : p(X) => ![X] : q(X)))).
+
+fof(drinker_paradox, conjecture, (?[X] : (p(X) => ![Y] : p(Y)))).
+
+% Hard
+fof(hard1, conjecture, ((![X] : p(X)) => ?[Y] : p(Y))).
+
+fof(hard2, conjecture, ((![X] : (p(X) => q(X)) & p(a)) => q(a))).
+
+fof(hard3, conjecture, ((![X] : (human(X) => mortal(X)) & human(socrates)) => mortal(socrates))).
+
+fof(hard4, conjecture, (?[X] : ?[Y] : r(X, Y) => ?[Y] : ?[X] : r(X, Y))).
+
+fof(hard5, conjecture, ((![X, Y, Z] : ((r(X, Y) & r(Y, Z)) => r(X, Z)) & r(a, b) & r(b, c)) => r(a, c))).
+
+fof(hard6, conjecture, (![X] : ?[Y] : p(X, Y) => ![Z] : ?[W] : p(Z, W))).
+
+fof(existential_commutativity, conjecture, (?[X] : ?[Y] : r(X, Y) => ?[Y] : ?[X] : r(X, Y))).
+
+fof(chain_implication, conjecture, ((![X] : (p(X) => q(X)) & ![X] : (q(X) => r(X)) & p(a)) => r(a))).
+
+fof(transitivity_predicates, conjecture, ((![X, Y, Z] : ((r(X, Y) & r(Y, Z)) => r(X, Z)) & r(a, b) & r(b, c)) => r(a, c))).
+
+fof(surjective_trap, conjecture, (![X] : ?[Y] : p(X, Y) => ![Z] : ?[W] : p(Z, W))).
+
 fof(php3, conjecture, (
-    % Every pigeon (1, 2, 3, 4) must be in at least one hole (1, 2, 3)
     ((p11 | p12 | p13) & (p21 | p22 | p23) & (p31 | p32 | p33) & (p41 | p42 | p43))
     =>
-    % There must be a collision (Two pigeons in the same hole)
     (
-        (p11 & p21) | (p11 & p31) | (p11 & p41) | (p21 & p31) | (p21 & p41) | (p31 & p41) | % Hole 1
-        (p12 & p22) | (p12 & p32) | (p12 & p42) | (p22 & p32) | (p22 & p42) | (p32 & p42) | % Hole 2
-        (p13 & p23) | (p13 & p33) | (p13 & p43) | (p23 & p33) | (p23 & p43) | (p33 & p43)   % Hole 3
+        (p11 & p21) | (p11 & p31) | (p11 & p41) | (p21 & p31) | (p21 & p41) | (p31 & p41) |
+        (p12 & p22) | (p12 & p32) | (p12 & p42) | (p22 & p32) | (p22 & p42) | (p32 & p42) |
+        (p13 & p23) | (p13 & p33) | (p13 & p43) | (p23 & p33) | (p23 & p43) | (p33 & p43)
     )
 )).
+
+fof(graph_colouring, conjecture,
+  (((r1 | g1 | b1) & (r2 | g2 | b2) & (r3 | g3 | b3)) &
+   (~(r1 & r2)) & (~(g1 & g2)) & (~(b1 & b2)) &
+   (~(r1 & r3)) & (~(g1 & g3)) & (~(b1 & b3)) &
+   (~(r2 & r3)) & (~(g2 & g3)) & (~(b2 & b3)))
+  =>
+  ((r1 | g1 | b1) & (r2 | g2 | b2) & (r3 | g3 | b3))).
+
+fof(distribution, conjecture,
+  (((p1 | p2) & (p3 | p4) & (p5 | p6) & (p7 | p8)) =>
+   ((p1 | p2) & (p3 | p4) & (p5 | p6) & (p7 | p8)))).
+
+fof(php32, conjecture,
+  ((((p11 | p12) & (p21 | p22)) & (p31 | p32)) &
+   (~(p11 & p21)) & (~(p11 & p31)) & (~(p21 & p31)) &
+   (~(p12 & p22)) & (~(p12 & p32)) & (~(p22 & p32)))
+  => false).
+
+fof(disj_chain, conjecture,
+  ((((((a | b) & (b | c)) & (c | d)) & (d | e)) & ~b & ~c & ~d) => (a & e))).
+
+fof(case_split, conjecture,
+  ((((p | q) & (r | s)) & ((p => t) & (q => t)) & ((r => u) & (s => u))) => (t & u))).
+
+fof(nested_disj, conjecture,
+  (((((p | q) | r) & ((s | t) | u)) & ((p => z) & (q => z) & (r => z)) & ((s => z) & (t => z) & (u => z))) => z)).
+
+fof(resolution_stress, conjecture,
+  ((((((p1 | p2) & (p3 | p4)) & ((p5 | p6) & (p7 | p8))) &
+    ((~p1 | p3) & (~p2 | p4))) &
+    ((~p3 | p5) & (~p4 | p6))) => (p5 | p6 | p7 | p8))).
+
+fof(php43, conjecture,
+ ((((p11|p12|p13)&(p21|p22|p23))&(p31|p32|p33))&(p41|p42|p43))
+ &(~(p11&p21))&(~(p11&p31))&(~(p11&p41))
+ &(~(p21&p31))&(~(p21&p41))&(~(p31&p41))
+ &(~(p12&p22))&(~(p12&p32))&(~(p12&p42))
+ &(~(p22&p32))&(~(p22&p42))&(~(p32&p42))
+ &(~(p13&p23))&(~(p13&p33))&(~(p13&p43))
+ &(~(p23&p33))&(~(p23&p43))&(~(p33&p43))
+ =>false).
