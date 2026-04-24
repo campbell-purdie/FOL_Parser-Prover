@@ -24,6 +24,7 @@ struct Result {
     int peakDepth;
 };
 
+/*
 void writeCSV(const std::vector<Result>& improved,
               const std::string& filename) {
     
@@ -40,7 +41,7 @@ void writeCSV(const std::vector<Result>& improved,
     }
     std::cout << "CSV written to: " << filename << std::endl;
 }
-
+*/
 //----------------------------------PARSER-------------------------------------
 
 enum class NodeType {
@@ -192,10 +193,10 @@ public:
 class Parser {
     std::vector<Token> tokens;
     size_t current = 0;
-
+    //Node(NodeType t);
     Token peek() {return tokens[current]; }
     Token advance() {return tokens[current++]; }
-
+    
     Token match(Token::Type type) {
         if (peek().type == type) return advance();
         throw std::runtime_error("Unexpected Token");
@@ -358,6 +359,92 @@ struct Sequent {
         return terms;
     }
 
+    std::shared_ptr<Node> pushNegation(std::shared_ptr<Node> node) {
+        if (!node) return nullptr;
+
+        if (node->type == NodeType::NOT) {
+            auto child = node->children[0];
+
+            // ~~A → A
+            if (child->type == NodeType::NOT) {
+                return pushNegation(child->children[0]);
+            }
+
+            // ¬(A ∧ B) → ¬A ∨ ¬B
+            if (child->type == NodeType::AND) {
+                auto leftNot = std::make_shared<Node>(NodeType::NOT, child->children[0]);
+                auto rightNot = std::make_shared<Node>(NodeType::NOT, child->children[1]);
+                return std::make_shared<Node>(NodeType::OR,
+                    pushNegation(leftNot),
+                    pushNegation(rightNot));
+            }
+
+            // ¬(A ∨ B) → ¬A ∧ ¬B
+            if (child->type == NodeType::OR) {
+                auto leftNot = std::make_shared<Node>(NodeType::NOT, child->children[0]);
+                auto rightNot = std::make_shared<Node>(NodeType::NOT, child->children[1]);
+                return std::make_shared<Node>(NodeType::AND,
+                    pushNegation(leftNot),
+                    pushNegation(rightNot));
+            }
+
+            // ¬∀X A → ∃X ¬A
+            if (child->type == NodeType::FORALL) {
+                auto negBody = std::make_shared<Node>(NodeType::NOT, child->children[0]);
+                return std::make_shared<Node>(NodeType::EXISTS, child->name, pushNegation(negBody));
+            }
+
+            // ¬∃X A → ∀X ¬A
+            if (child->type == NodeType::EXISTS) {
+                auto negBody = std::make_shared<Node>(NodeType::NOT, child->children[0]);
+                return std::make_shared<Node>(NodeType::FORALL, child->name, pushNegation(negBody));
+            }
+        }
+
+        // default: recurse
+        auto newNode = std::make_shared<Node>(node->type, node->name);
+        for (auto& c : node->children) {
+            newNode->children.push_back(pushNegation(c));
+        }
+        return newNode;
+    }
+
+    std::shared_ptr<Node> eliminateImplications(std::shared_ptr<Node> node) {
+        if (!node) return nullptr;
+
+        if (node->type == NodeType::IMPLY) {
+            auto notA = std::make_shared<Node>(NodeType::NOT, eliminateImplications(node->children[0]));
+            return std::make_shared<Node>(NodeType::OR, notA, eliminateImplications(node->children[1]));
+        }
+
+        auto newNode = std::make_shared<Node>(node->type, node->name);
+        for (auto& c : node->children) {
+            newNode->children.push_back(eliminateImplications(c));
+        }
+        return newNode;
+    }
+
+    void normalise() {
+    for (auto& f : antecedent) {
+        f = eliminateImplications(f);
+        f = pushNegation(f);
+    }
+    for (auto& f : succedent) {
+        f = eliminateImplications(f);
+        f = pushNegation(f);
+    }
+}
+    bool hasNegatedQuantifier(std::shared_ptr<Node> node) {
+        if (!node) return false;
+        if (node->type == NodeType::NOT && !node->children.empty()) {
+            auto child = node->children[0];
+            if (child->type == NodeType::FORALL || child->type == NodeType::EXISTS)
+                return true;
+        }
+        for (auto& c : node->children)
+            if (hasNegatedQuantifier(c)) return true;
+        return false;
+    }
 };
 
 //Prover
@@ -371,12 +458,26 @@ public:
     using UsedRegistry = std::map<std::shared_ptr<Node>, std::set<std::string>>;
     bool prove(Sequent s, UsedRegistry used, Stats& stats, int depth = 0){
         //--------------------------------------Closing Rules ---------------------------------------
-        
+            
+  //  std::cout << "Checking closure - Antecedent atoms: ";
+ //   for (auto& f : s.antecedent) {
+ //       if (f->type == NodeType::ATOM)
+ //           std::cout << "'" << f->name << "'(children:" << f->children.size() << ") ";
+ //   }
+ //   std::cout << "\nSuccedent atoms: ";
+ //   for (auto& f : s.succedent) {
+ //       if (f->type == NodeType::ATOM)
+ //           std::cout << "'" << f->name << "'(children:" << f->children.size() << ") ";
+ //   }
+//std::cout << std::endl;
+
+
         stats.nodesExplored++;
         
         stats.peakDepth = std::max(stats.peakDepth, depth);
         //Base case: ID
         if(s.isClosed()){
+     //       std::cout << "CLOSED via ID" << std::endl;
             return true;
         }
 
@@ -388,14 +489,21 @@ public:
         //Limit Depth (prevent infinite loops)
         if (depth > 1000) return false;
 
-        if (stats.nodesExplored > 100000) return false;
+        //if (stats.nodesExplored > 800000) return false;
 
         //--------------------------------------Non-Branching Rules ---------------------------------
         
         //AND on Left
         for(size_t i = 0; i < s.antecedent.size(); ++i){
             if(s.antecedent[i]->type == NodeType::AND) {
-
+                
+            //    std::cout << "Applying AND_L" << std::endl;
+            //    std::cout << "Antecedent: ";
+             //   for (auto& f : s.antecedent) std::cout << f->toString() << " | ";
+             //   std::cout << "\nSuccedent: ";
+            //    for (auto& f : s.succedent) std::cout << f->toString() << " | ";
+            //    std::cout << std::endl;
+                
                 Sequent next = s;
                 auto A = next.antecedent[i]->children[0];
                 auto B = next.antecedent[i]->children[1];
@@ -410,7 +518,14 @@ public:
         //OR on Right
         for (size_t i = 0; i < s.succedent.size(); i++) {
             if(s.succedent[i]->type == NodeType::OR) {
-               
+                
+           //     std::cout << "Applying OR_R" << std::endl;
+           //     std::cout << "Antecedent: ";
+           //     for (auto& f : s.antecedent) std::cout << f->toString() << " | ";
+            //    std::cout << "\nSuccedent: ";
+            //    for (auto& f : s.succedent) std::cout << f->toString() << " | ";
+            //    std::cout << std::endl;
+                
                 Sequent next = s;
                 auto A = next.succedent[i]->children[0];
                 auto B = next.succedent[i]->children[1];
@@ -425,6 +540,13 @@ public:
         //IMPLY on Right
         for(size_t i = 0; i < s.succedent.size(); ++i){
             if(s.succedent[i]->type == NodeType::IMPLY) {
+
+             //   std::cout << "Applying IMPLY_R" << std::endl;
+              //  std::cout << "Antecedent: ";
+              //  for (auto& f : s.antecedent) std::cout << f->toString() << " | ";
+              //  std::cout << "\nSuccedent: ";
+             //   for (auto& f : s.succedent) std::cout << f->toString() << " | ";
+             //   std::cout << std::endl;
                 
                 Sequent next = s;
                 auto A = next.succedent[i]->children[0];
@@ -440,7 +562,14 @@ public:
         //NEGATION on Left
         for (size_t i = 0; i < s.antecedent.size(); i++) {
             if(s.antecedent[i]->type == NodeType::NOT) {
-              
+
+              //  std::cout << "Applying NEGATION_L" << std::endl;
+              //  std::cout << "Antecedent: ";
+              //  for (auto& f : s.antecedent) std::cout << f->toString() << " | ";
+             //   std::cout << "\nSuccedent: ";
+              //  for (auto& f : s.succedent) std::cout << f->toString() << " | ";
+             //   std::cout << std::endl;
+                
                 Sequent next = s;
                 auto A = next.antecedent[i]->children[0];
               
@@ -453,7 +582,13 @@ public:
         //NEGATION on Right 
         for (size_t i = 0; i < s.succedent.size(); i++) {
             if(s.succedent[i]->type == NodeType::NOT) {
-               
+               // std::cout << "Applying NEGATION_R" << std::endl;
+                //std::cout << "Antecedent: ";
+               // for (auto& f : s.antecedent) std::cout << f->toString() << " | ";
+               // std::cout << "\nSuccedent: ";
+               // for (auto& f : s.succedent) std::cout << f->toString() << " | ";
+               // std::cout << std::endl;
+                
                 Sequent next = s;
                 auto A = next.succedent[i]->children[0];
                
@@ -466,7 +601,13 @@ public:
         //FORALL Right
         for(size_t i = 0; i < s.succedent.size(); ++i) {
             if(s.succedent[i]->type == NodeType::FORALL) {
-               
+                //std::cout << "Applying FORALL_R" << std::endl;
+                //std::cout << "Antecedent: ";
+                //for (auto& f : s.antecedent) std::cout << f->toString() << " | ";
+               // std::cout << "\nSuccedent: ";
+                //for (auto& f : s.succedent) std::cout << f->toString() << " | ";
+                //std::cout << std::endl;
+
                 std::string termToUse = getFreshTerm();
                 Sequent next = s;
                 std::string varName = next.succedent[i]->name;
@@ -482,6 +623,13 @@ public:
         for(size_t i = 0; i < s.antecedent.size(); ++i) {
             if(s.antecedent[i]->type == NodeType::EXISTS) {      
                 std::string termToUse = getFreshTerm();
+                //std::cout << "Applying EXISTS_L" << std::endl;
+                //std::cout << "Antecedent: ";
+                //for (auto& f : s.antecedent) std::cout << f->toString() << " | ";
+                //std::cout << "\nSuccedent: ";
+                //for (auto& f : s.succedent) std::cout << f->toString() << " | ";
+                //std::cout << std::endl;
+
                 Sequent next = s;
                 std::string varName = next.antecedent[i]->name;
                 auto body = next.antecedent[i]->children[0];
@@ -503,6 +651,12 @@ public:
                 Sequent rightBranch = s;
                 auto A = s.succedent[i]->children[0];
                 auto B = s.succedent[i]->children[1];
+    //            std::cout << "Applying AND_R" << std::endl;
+    //            std::cout << "Antecedent: ";
+    //            for (auto& f : s.antecedent) std::cout << f->toString() << " | ";
+     //           std::cout << "\nSuccedent: ";
+      //          for (auto& f : s.succedent) std::cout << f->toString() << " | ";
+      //          std::cout << std::endl;
 
                 if (A->size() > B->size()) std::swap(A, B);
 
@@ -522,8 +676,7 @@ public:
         }
         
         //OR on Left
-        for (size_t i = 0; i < s.antecedent.size(); i++){
-            if (s.antecedent[i]->type == NodeType::OR){
+        {
         int bestIdx = -1;
         int bestScore = INT_MAX;
         for (size_t i = 0; i < s.antecedent.size(); i++) {
@@ -536,6 +689,12 @@ public:
             }
         }
         if (bestIdx >= 0) {
+  //          std::cout << "Applying OR_L" << std::endl;
+  //          std::cout << "Antecedent: ";
+  //          for (auto& f : s.antecedent) std::cout << f->toString() << " | ";
+   //         std::cout << "\nSuccedent: ";
+   //         for (auto& f : s.succedent) std::cout << f->toString() << " | ";
+    //        std::cout << std::endl;
             Sequent leftBranch = s;
             Sequent rightBranch = s;
             auto A = s.antecedent[bestIdx]->children[0];
@@ -556,7 +715,7 @@ public:
             return false;
         }
         }
-        }
+    
         //IMPLY on Left
         for (size_t i = 0; i < s.antecedent.size(); i++){
             if(s.antecedent[i]->type == NodeType::IMPLY){
@@ -573,10 +732,9 @@ public:
                 rightBranch.antecedent.push_back(B);
 
                 bool leftSuccess = prove(leftBranch, used, stats, depth + 1);
-                if (leftSuccess){
-                    return prove(rightBranch, used, stats, depth + 1);
-                }
-                
+                bool rightSuccess = prove(rightBranch, used, stats, depth + 1);
+     //           std::cout << "IMPLY_L results: left=" << leftSuccess << " right=" << rightSuccess << std::endl;
+                if (leftSuccess && rightSuccess) return true;
                 return false;
             }
         }
@@ -585,6 +743,13 @@ public:
         // EXISTS-R: instantiate with existing unused term
         for(size_t i = 0; i < s.succedent.size(); i++) {
             if(s.succedent[i]->type == NodeType::EXISTS){
+       //         std::cout << "Applying EXISTS_R (existing unused term)" << std::endl;
+        //        std::cout << "Antecedent: ";
+         //       for (auto& f : s.antecedent) std::cout << f->toString() << " | ";
+          //      std::cout << "\nSuccedent: ";
+          //      for (auto& f : s.succedent) std::cout << f->toString() << " | ";
+          //      std::cout << std::endl;
+
                 auto terms = s.getExistingTerms();
                 std::string termToUse = "";
 
@@ -609,6 +774,13 @@ public:
         // EXISTS-R: fresh term as last resort
         for(size_t i = 0; i < s.succedent.size(); i++) {
             if(s.succedent[i]->type == NodeType::EXISTS){
+                std::cout << "Applying EXISTS_R (fresh)" << std::endl;
+                std::cout << "Antecedent: ";
+                for (auto& f : s.antecedent) std::cout << f->toString() << " | ";
+                std::cout << "\nSuccedent: ";
+                for (auto& f : s.succedent) std::cout << f->toString() << " | ";
+               std::cout << std::endl;
+
                 if(used[s.succedent[i]].size() >= 3) return false;
                 std::string termToUse = getFreshTerm();
                 used[s.succedent[i]].insert(termToUse);
@@ -624,9 +796,10 @@ public:
         //FORALL Left
         for(size_t i = 0; i < s.antecedent.size(); i++) {
             if (s.antecedent[i]->type == NodeType::FORALL){
+
                 auto terms = s.getExistingTerms();
                 std::string termToUse = "";
-
+               
                 for(const auto& t : terms){
                     if (used[s.antecedent[i]].find(t) == used[s.antecedent[i]].end()){
                         termToUse = t;
@@ -650,6 +823,14 @@ public:
         // FORALL-L: no unused terms exist, create a fresh term (last resort)
         for(size_t i = 0; i < s.antecedent.size(); i++) {
             if (s.antecedent[i]->type == NodeType::FORALL){
+               std::cout << "Applying FORALL_L (fresh)" << std::endl;
+                std::cout << "Antecedent: ";
+                for (auto& f : s.antecedent) std::cout << f->toString() << " | ";
+                std::cout << "\nSuccedent: ";
+               for (auto& f : s.succedent) std::cout << f->toString() << " | ";
+                std::cout << std::endl;
+
+                //if(used[s.antecedent[i]].size() >= 1000) continue;
                 std::string termToUse = getFreshTerm();
                 used[s.antecedent[i]].insert(termToUse);
                 Sequent next = s;
@@ -735,14 +916,20 @@ int main(int argc, char* argv[]) {
                 } else {
                     initial.antecedent.push_back(formula);
                 }
-                std::cout << "Parsed " << role << " successfully." << std::endl;
+                //std::cout << "Parsed " << role << " successfully." << std::endl;
             }
         }
-        std::cout << "Total Axioms: " << initial.antecedent.size() << std::endl;
+        //std::cout << "Total Axioms: " << initial.antecedent.size() << std::endl;
     } catch (const std::exception& e) {
         std::cerr << "Parser Error: " << e.what() << std::endl;
         return 1;
     }
+    std::vector<std::string> failedProblems;
+    auto global_start = std::chrono::high_resolution_clock::now();
+    auto global_nodes = 0;
+    auto problem_counter = 0;
+    auto proven = 0;
+    auto failed = 0;
 
     std::cout << "--- Starting Proof Search ---" << std::endl;
     std::vector<std::shared_ptr<Node>> axioms;
@@ -755,28 +942,56 @@ int main(int argc, char* argv[]) {
         Sequent s;
         s.antecedent = axioms;
         s.succedent.push_back(conjecture);
+        
         Stats stats;
         Prover::UsedRegistry used;
         Prover prover;
         std::string problemStr = conjecture->toString();    
-        std::cout << "\nProving: " << problemStr << std::endl;
+        std::cout << "\nProving: " << problem_counter << " " << problemStr << std::endl;
         
         auto start = std::chrono::high_resolution_clock::now();
+        for (auto& f : s.antecedent)
+            if (s.hasNegatedQuantifier(f)) f = s.pushNegation(s.eliminateImplications(f));
+        for (auto& f : s.succedent)
+           if (s.hasNegatedQuantifier(f)) f = s.pushNegation(s.eliminateImplications(f));
+        
         bool result = prover.prove(s, used, stats, 0);
+        problem_counter += 1;
+        if(result){ 
+            proven += 1;
+        } else {  
+            failed += 1;
+            failedProblems.push_back(conjecture->toString().substr(0, 80));
+        }
         auto end = std::chrono::high_resolution_clock::now();
 
         double ms = std::chrono::duration<double, std::milli>(end - start).count();
 
-        std::cout << "Result:       " << (result ? "Proved" : "Failed") << std::endl;
-        std::cout << "Time:         " << ms << " ms" << std::endl;
-        std::cout << "Nodes:        " << stats.nodesExplored << std::endl;
-        std::cout << "Peak depth:   " << stats.peakDepth << std::endl;
-
+        //std::cout << "Result:       " << (result ? "Proved" : "Failed") << std::endl;
+        //std::cout << "Time:         " << ms << " ms" << std::endl;
+        //std::cout << "Nodes:        " << stats.nodesExplored << std::endl;
+        //std::cout << "Peak depth:   " << stats.peakDepth << std::endl;
+        global_nodes += stats.nodesExplored;
         improvedResults.push_back({problemStr, result, ms, stats.nodesExplored, stats.peakDepth});
     }
+    
+    auto global_end = std::chrono::high_resolution_clock::now();
+    std::cout << "--- Proof Search Concluded --- " << std::endl;
+    double global_ms = std::chrono::duration<double, std::milli>(global_end - global_start).count();
+    std::cout << "Number of Problems Attempted:     " << problem_counter << std::endl;
+    std::cout << "Proven:                           " << proven << std::endl; 
+    std::cout << "Failed:                           " << failed << std::endl;
+    std::cout << "Total Time:                       " << global_ms << " ms" << std::endl;
+    std::cout << "Average Time to solve:            " << (global_ms / problem_counter) << " ms" << std::endl;
+    std::cout << "Average Number of Nodes Explored: " << (global_nodes / problem_counter) << std::endl;
+    
 
-    writeCSV(improvedResults, "improved_results.csv");
-
-
+    if (!failedProblems.empty()) {
+    std::cout << "\nFailed Problems:" << std::endl;
+    for (const auto& name : failedProblems) {
+        std::cout << "  - " << name << std::endl;
+    }
+}
+    
     return 0;
 }

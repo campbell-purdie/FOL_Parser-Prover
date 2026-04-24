@@ -352,6 +352,94 @@ struct Sequent {
         for (auto& f : succedent) find(f);
         return terms;
     }
+        std::shared_ptr<Node> pushNegation(std::shared_ptr<Node> node) {
+        if (!node) return nullptr;
+
+        if (node->type == NodeType::NOT) {
+            auto child = node->children[0];
+
+            // ~~A → A
+            if (child->type == NodeType::NOT) {
+                return pushNegation(child->children[0]);
+            }
+
+            // ¬(A ∧ B) → ¬A ∨ ¬B
+            if (child->type == NodeType::AND) {
+                auto leftNot = std::make_shared<Node>(NodeType::NOT, child->children[0]);
+                auto rightNot = std::make_shared<Node>(NodeType::NOT, child->children[1]);
+                return std::make_shared<Node>(NodeType::OR,
+                    pushNegation(leftNot),
+                    pushNegation(rightNot));
+            }
+
+            // ¬(A ∨ B) → ¬A ∧ ¬B
+            if (child->type == NodeType::OR) {
+                auto leftNot = std::make_shared<Node>(NodeType::NOT, child->children[0]);
+                auto rightNot = std::make_shared<Node>(NodeType::NOT, child->children[1]);
+                return std::make_shared<Node>(NodeType::AND,
+                    pushNegation(leftNot),
+                    pushNegation(rightNot));
+            }
+
+            // ¬∀X A → ∃X ¬A
+            if (child->type == NodeType::FORALL) {
+                auto negBody = std::make_shared<Node>(NodeType::NOT, child->children[0]);
+                return std::make_shared<Node>(NodeType::EXISTS, child->name, pushNegation(negBody));
+            }
+
+            // ¬∃X A → ∀X ¬A
+            if (child->type == NodeType::EXISTS) {
+                auto negBody = std::make_shared<Node>(NodeType::NOT, child->children[0]);
+                return std::make_shared<Node>(NodeType::FORALL, child->name, pushNegation(negBody));
+            }
+        }
+
+        // default: recurse
+        auto newNode = std::make_shared<Node>(node->type, node->name);
+        for (auto& c : node->children) {
+            newNode->children.push_back(pushNegation(c));
+        }
+        return newNode;
+        }
+
+        std::shared_ptr<Node> eliminateImplications(std::shared_ptr<Node> node) {
+            if (!node) return nullptr;
+
+            if (node->type == NodeType::IMPLY) {
+                auto notA = std::make_shared<Node>(NodeType::NOT, eliminateImplications(node->children[0]));
+                return std::make_shared<Node>(NodeType::OR, notA, eliminateImplications(node->children[1]));
+            }
+
+            auto newNode = std::make_shared<Node>(node->type, node->name);
+            for (auto& c : node->children) {
+                newNode->children.push_back(eliminateImplications(c));
+            }
+            return newNode;
+        }
+
+        void normalise() {
+        for (auto& f : antecedent) {
+            f = eliminateImplications(f);
+            f = pushNegation(f);
+        }
+        for (auto& f : succedent) {
+            f = eliminateImplications(f);
+            f = pushNegation(f);
+        }
+        }
+        
+        bool hasNegatedQuantifier(std::shared_ptr<Node> node) {
+            if (!node) return false;
+            if (node->type == NodeType::NOT && !node->children.empty()) {
+                auto child = node->children[0];
+                if (child->type == NodeType::FORALL || child->type == NodeType::EXISTS)
+                    return true;
+            }
+            for (auto& c : node->children)
+                if (hasNegatedQuantifier(c)) return true;
+            return false;
+        }
+
 };
 
 //Prover
@@ -382,7 +470,7 @@ public:
 
         //Limit Depth (prevent infinite loops)
         if (depth > 1000) return false;
-
+        //if (stats.nodesExplored > 800000) return false;
         //--------------------------------------Non-Branching Rules ---------------------------------
         
         //AND on Left
@@ -719,18 +807,24 @@ int main(int argc, char* argv[]) {
                 } else {
                     initial.antecedent.push_back(formula);
                 }
-                std::cout << "Parsed " << role << " successfully." << std::endl;
+                //std::cout << "Parsed " << role << " successfully." << std::endl;
             }
         }
-        std::cout << "Total Axioms: " << initial.antecedent.size() << std::endl;
+        //std::cout << "Total Axioms: " << initial.antecedent.size() << std::endl;
     } catch (const std::exception& e) {
         std::cerr << "Parser Error: " << e.what() << std::endl;
         return 1;
     }
-    
+    std::vector<std::string> failedProblems;
+    auto global_start = std::chrono::high_resolution_clock::now();
+    auto global_nodes = 0;
+    auto problem_counter = 0;
+    auto proven = 0;
+    auto failed = 0;
+
     std::cout << "--- Starting Proof Search ---" << std::endl;
-    std::vector<Result> baselineResults;
     std::vector<std::shared_ptr<Node>> axioms;
+    std::vector<Result> improvedResults;
     for (auto& f: initial.antecedent){
         axioms.push_back(f);
     }
@@ -739,27 +833,57 @@ int main(int argc, char* argv[]) {
         Sequent s;
         s.antecedent = axioms;
         s.succedent.push_back(conjecture);
+        
         Stats stats;
         Prover::UsedRegistry used;
         Prover prover;
-        std::set<std::string> cache;
-        std::string problemStr = conjecture->toString(); 
-        std::cout << "\nProving: " << problemStr << std::endl;
+        std::string problemStr = conjecture->toString();    
+        std::cout << "\nProving: " << problem_counter << " " << problemStr << std::endl;
         
         auto start = std::chrono::high_resolution_clock::now();
+        for (auto& f : s.antecedent)
+            if (s.hasNegatedQuantifier(f)) f = s.pushNegation(s.eliminateImplications(f));
+        for (auto& f : s.succedent)
+           if (s.hasNegatedQuantifier(f)) f = s.pushNegation(s.eliminateImplications(f));
+        
         bool result = prover.prove(s, used, stats, 0);
+        problem_counter += 1;
+        if(result){ 
+            proven += 1;
+        } else {  
+            failed += 1;
+            failedProblems.push_back(conjecture->toString().substr(0, 80));
+        }
         auto end = std::chrono::high_resolution_clock::now();
 
         double ms = std::chrono::duration<double, std::milli>(end - start).count();
 
-        std::cout << "Result:       " << (result ? "Proved" : "Failed") << std::endl;
-        std::cout << "Time:         " << ms << " ms" << std::endl;
-        std::cout << "Nodes:        " << stats.nodesExplored << std::endl;
-        std::cout << "Peak depth:   " << stats.peakDepth << std::endl;
-        baselineResults.push_back({problemStr, result, ms, stats.nodesExplored, stats.peakDepth});
+        //std::cout << "Result:       " << (result ? "Proved" : "Failed") << std::endl;
+        //std::cout << "Time:         " << ms << " ms" << std::endl;
+        //std::cout << "Nodes:        " << stats.nodesExplored << std::endl;
+        //std::cout << "Peak depth:   " << stats.peakDepth << std::endl;
+        global_nodes += stats.nodesExplored;
+        improvedResults.push_back({problemStr, result, ms, stats.nodesExplored, stats.peakDepth});
     }
+    
+    auto global_end = std::chrono::high_resolution_clock::now();
+    std::cout << "--- Proof Search Concluded --- " << std::endl;
+    double global_ms = std::chrono::duration<double, std::milli>(global_end - global_start).count();
+    std::cout << "Number of Problems Attempted:     " << problem_counter << std::endl;
+    std::cout << "Proven:                           " << proven << std::endl; 
+    std::cout << "Failed:                           " << failed << std::endl;
+    std::cout << "Total Time:                       " << global_ms << " ms" << std::endl;
+    std::cout << "Average Time to solve:            " << (global_ms / problem_counter) << " ms" << std::endl;
+    std::cout << "Average Number of Nodes Explored: " << (global_nodes / problem_counter) << std::endl;
+    
 
-    writeCSV(baselineResults, "base_results.csv");
+    if (!failedProblems.empty()) {
+    std::cout << "\nFailed Problems:" << std::endl;
+    for (const auto& name : failedProblems) {
+        std::cout << "  - " << name << std::endl;
+    }
+}
+    
     return 0;
 }
 

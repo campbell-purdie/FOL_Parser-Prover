@@ -1,119 +1,1047 @@
-% Easy
+fof(test0, conjecture, (((q => s) & (s => p)) => (q => p))).
+fof(test1, conjecture, ((s & (q | r)) => ((s & q) | (s & r)))).
+fof(test2, conjecture, (((q | s) & ~q) => s)).
+fof(test3, conjecture, (?[X]: q(X) => ?[Y]: q(Y))).
+fof(test4, conjecture, ((q | s) => (s | q))).
+fof(test5, conjecture, (p => ~~p)).
+fof(test6, conjecture, (s(a) => ?[X]: s(X))).
+fof(test7, conjecture, ((s | r) => (r | s))).
+fof(test8, conjecture, (![X]: (r(X) => q(X)) & r(a) => q(a))).
+fof(test9, conjecture, (r => (r | q))).
+fof(test10, conjecture, ((q & r) => q)).
+fof(test11, conjecture, (q | ~q)).
+fof(test12, conjecture, (((q => p) & (~q => p)) => p)).
+fof(test13, conjecture, (s => s)).
+fof(test14, conjecture, (((s & p) | (s & r)) => (s & (p | r)))).
+fof(test15, conjecture, ((q => (s => p)) => (s => (q => p)))).
+fof(test16, conjecture, (![X]: (q(X) => r(X)) & q(a) => r(a))).
+fof(test17, conjecture, (?[X]: p(X) => ?[Y]: p(Y))).
+fof(test18, conjecture, (p | ~p)).
+fof(test19, conjecture, (((r & p) | (r & s)) => (r & (p | s)))).
+fof(test20, conjecture, (![X]: (r(X) => s(X)) & r(a) => s(a))).
+fof(test21, conjecture, (p => p)).
+fof(test22, conjecture, (p => (p | r))).
+fof(test23, conjecture, (p => p)).
+fof(test24, conjecture, ((q & (s | r)) => ((q & s) | (q & r)))).
+fof(test25, conjecture, ((s => (r => p)) => (r => (s => p)))).
+fof(test26, conjecture, (r => (r | s))).
+fof(test27, conjecture, (s(a) => ?[X]: s(X))).
+fof(test28, conjecture, ((p & s) => p)).
+fof(test29, conjecture, ((s & r) => (r & s))).
+fof(test30, conjecture, (s => ~~s)).
+fof(test31, conjecture, (((p | r) & ~p) => r)).
+fof(test32, conjecture, (((s => p) & (p => q)) => (s => q))).
+fof(test33, conjecture, (s | ~s)).
+fof(test34, conjecture, (((p & r) | (p & s)) => (p & (r | s)))).
+fof(test35, conjecture, ((r & q) => (q & r))).
+fof(test36, conjecture, (~~p => p)).
+fof(test37, conjecture, (p => p)).
+fof(test38, conjecture, (s => (s | r))).
+fof(test39, conjecture, (~~q => q)).
+fof(test40, conjecture, ((q | s) => (s | q))).
+fof(test41, conjecture, (((r | p) & ~r) => p)).
+fof(test42, conjecture, (((s => q) & (r => q)) => ((s | r) => q))).
+fof(test43, conjecture, (~~s => s)).
+fof(test44, conjecture, (((s => q) & (p => q)) => ((s | p) => q))).
+fof(test45, conjecture, (~~r => r)).
+fof(test46, conjecture, (![X]: (q(X) => p(X)) & q(a) => p(a))).
+fof(test47, conjecture, (~~q => q)).
+fof(test48, conjecture, (s => (p => s))).
+fof(test49, conjecture, ((r => s) => (~s => ~r))).
+fof(test50, conjecture, ((r & p) => r)).
+fof(test51, conjecture, (q => q)).
+fof(test52, conjecture, (![X]: (p(X) => s(X)) & p(a) => s(a))).
+fof(test53, conjecture, ((r | p) => (p | r))).
+fof(test54, conjecture, (?[X]: p(X) => ?[Y]: p(Y))).
+fof(test55, conjecture, ((s & (r | p)) => ((s & r) | (s & p)))).
+fof(test56, conjecture, (?[X]: r(X) => ?[Y]: r(Y))).
+fof(test57, conjecture, ((p & r) => (r & p))).
+fof(test58, conjecture, (r(a) => ?[X]: r(X))).
+fof(test59, conjecture, ((p & r) => (r & p))).
+fof(test60, conjecture, ((q & (s | p)) => ((q & s) | (q & p)))).
+fof(test61, conjecture, (r => ~~r)).
+fof(test62, conjecture, ((q & r) => r)).
+fof(test63, conjecture, (![X]: s(X) => ?[X]: s(X))).
+fof(test64, conjecture, (![X]: (s(X) => r(X)) & s(a) => r(a))).
+fof(test65, conjecture, (r => ~~r)).
+fof(test66, conjecture, (((p & r) | (p & s)) => (p & (r | s)))).
+fof(test67, conjecture, (r(a) => ?[X]: r(X))).
+fof(test68, conjecture, ((s => (q => r)) => (q => (s => r)))).
+fof(test69, conjecture, ((r & p) => p)).
+fof(test70, conjecture, (~~r => r)).
+fof(test71, conjecture, (((q => s) & (s => p)) => (q => p))).
+fof(test72, conjecture, ((r & q) => r)).
+fof(test73, conjecture, (((s & p) | (s & r)) => (s & (p | r)))).
+fof(test74, conjecture, (((q => s) & (s => p)) => (q => p))).
+fof(test75, conjecture, (r => ~~r)).
+fof(test76, conjecture, (q => q)).
+fof(test77, conjecture, ((q | s) => (s | q))).
+fof(test78, conjecture, (p => p)).
+fof(test79, conjecture, ((p & s) => s)).
+fof(test80, conjecture, (p => (p | r))).
+fof(test81, conjecture, (~~p => p)).
+fof(test82, conjecture, (((q | p) & ~q) => p)).
+fof(test83, conjecture, ((q & (s | p)) => ((q & s) | (q & p)))).
+fof(test84, conjecture, ((r => p) => (~p => ~r))).
+fof(test85, conjecture, (![X]: s(X) => ?[X]: s(X))).
+fof(test86, conjecture, (((q => r) & (r => s)) => (q => s))).
+fof(test87, conjecture, (![X]: p(X) => ?[X]: p(X))).
+fof(test88, conjecture, ((r & p) => p)).
+fof(test89, conjecture, (r(a) => ?[X]: r(X))).
+fof(test90, conjecture, (s => (s | p))).
+fof(test91, conjecture, (q => q)).
+fof(test92, conjecture, ((s & q) => (q & s))).
+fof(test93, conjecture, (((p & r) | (p & q)) => (p & (r | q)))).
+fof(test94, conjecture, (![X]: p(X) => ?[X]: p(X))).
+fof(test95, conjecture, ((q => (s => r)) => (s => (q => r)))).
+fof(test96, conjecture, (r => ~~r)).
+fof(test97, conjecture, (((p | r) & ~p) => r)).
+fof(test98, conjecture, ((r & q) => (q & r))).
+fof(test99, conjecture, ((r & (p | q)) => ((r & p) | (r & q)))).
+fof(test100, conjecture, (q => ~~q)).
+fof(test101, conjecture, (((s & r) | (s & q)) => (s & (r | q)))).
+fof(test102, conjecture, (~~p => p)).
+fof(test103, conjecture, (((s => q) & (q => r)) => (s => r))).
+fof(test104, conjecture, ((q & s) => q)).
+fof(test105, conjecture, ((p => (r => q)) => (r => (p => q)))).
+fof(test106, conjecture, (((p | s) & ~p) => s)).
+fof(test107, conjecture, ((r & q) => r)).
+fof(test108, conjecture, (r => (p => r))).
+fof(test109, conjecture, ((s | q) => (q | s))).
+fof(test110, conjecture, (q(a) => ?[X]: q(X))).
+fof(test111, conjecture, (q => ~~q)).
+fof(test112, conjecture, (r => (r | q))).
+fof(test113, conjecture, ((s & p) => p)).
+fof(test114, conjecture, (![X]: (s(X) => r(X)) & s(a) => r(a))).
+fof(test115, conjecture, (![X]: p(X) => p(a))).
+fof(test116, conjecture, (((r | p) & ~r) => p)).
+fof(test117, conjecture, ((q => s) => (~s => ~q))).
+fof(test118, conjecture, (((p => q) & (r => q)) => ((p | r) => q))).
+fof(test119, conjecture, ((q | r) => (r | q))).
+fof(test120, conjecture, (s | ~s)).
+fof(test121, conjecture, ((p => (q => r)) => (q => (p => r)))).
+fof(test122, conjecture, (r => r)).
+fof(test123, conjecture, (q => q)).
+fof(test124, conjecture, (~~r => r)).
+fof(test125, conjecture, (r(a) => ?[X]: r(X))).
+fof(test126, conjecture, (((p & s) | (p & q)) => (p & (s | q)))).
+fof(test127, conjecture, (q => (s => q))).
+fof(test128, conjecture, ((s => (r => p)) => (r => (s => p)))).
+fof(test129, conjecture, (s => (s | r))).
+fof(test130, conjecture, ((s | p) => (p | s))).
+fof(test131, conjecture, (~~p => p)).
+fof(test132, conjecture, (p => ~~p)).
+fof(test133, conjecture, (((q => s) & (s => p)) => (q => p))).
+fof(test134, conjecture, (((r => q) & (p => q)) => ((r | p) => q))).
+fof(test135, conjecture, ((r & p) => r)).
+fof(test136, conjecture, ((p => r) => (~r => ~p))).
+fof(test137, conjecture, (((r => q) & (s => q)) => ((r | s) => q))).
+fof(test138, conjecture, (r => ~~r)).
+fof(test139, conjecture, (s => (s | r))).
+fof(test140, conjecture, ((p => r) => (~r => ~p))).
+fof(test141, conjecture, (?[X]: q(X) => ?[Y]: q(Y))).
+fof(test142, conjecture, ((s & q) => (q & s))).
+fof(test143, conjecture, (![X]: (q(X) => p(X)) & q(a) => p(a))).
+fof(test144, conjecture, (((r => s) & (~r => s)) => s)).
+fof(test145, conjecture, (s => ~~s)).
+fof(test146, conjecture, (s | ~s)).
+fof(test147, conjecture, (p | ~p)).
+fof(test148, conjecture, (p(a) => ?[X]: p(X))).
+fof(test149, conjecture, ((q | r) => (r | q))).
+fof(test150, conjecture, (~~q => q)).
+fof(test151, conjecture, ((q | r) => (r | q))).
+fof(test152, conjecture, (((s => p) & (p => q)) => (s => q))).
+fof(test153, conjecture, (![X]: q(X) => ?[X]: q(X))).
+fof(test154, conjecture, ((s & r) => s)).
+fof(test155, conjecture, (p => ~~p)).
+fof(test156, conjecture, (?[X]: q(X) => ?[Y]: q(Y))).
+fof(test157, conjecture, (p => ~~p)).
+fof(test158, conjecture, ((r & p) => r)).
+fof(test159, conjecture, (s => (r => s))).
+fof(test160, conjecture, (((p | r) & ~p) => r)).
+fof(test161, conjecture, (q => q)).
+fof(test162, conjecture, (((q & p) | (q & r)) => (q & (p | r)))).
+fof(test163, conjecture, (![X]: p(X) => ?[X]: p(X))).
+fof(test164, conjecture, ((r => (q => p)) => (q => (r => p)))).
+fof(test165, conjecture, (((q => s) & (~q => s)) => s)).
+fof(test166, conjecture, (q | ~q)).
+fof(test167, conjecture, (![X]: s(X) => ?[X]: s(X))).
+fof(test168, conjecture, (((s => q) & (p => q)) => ((s | p) => q))).
+fof(test169, conjecture, ((r => q) => (~q => ~r))).
+fof(test170, conjecture, ((s | r) => (r | s))).
+fof(test171, conjecture, (s => ~~s)).
+fof(test172, conjecture, (![X]: (r(X) => s(X)) & r(a) => s(a))).
+fof(test173, conjecture, (?[X]: p(X) => ?[Y]: p(Y))).
+fof(test174, conjecture, (![X]: (r(X) => p(X)) & r(a) => p(a))).
+fof(test175, conjecture, ((q => (s => r)) => (s => (q => r)))).
+fof(test176, conjecture, (((q => p) & (s => p)) => ((q | s) => p))).
+fof(test177, conjecture, (((s => q) & (q => p)) => (s => p))).
+fof(test178, conjecture, (~~r => r)).
+fof(test179, conjecture, (s => (s | r))).
+fof(test180, conjecture, (~~p => p)).
+fof(test181, conjecture, ((r & p) => p)).
+fof(test182, conjecture, (![X]: r(X) => r(a))).
+fof(test183, conjecture, (r => ~~r)).
+fof(test184, conjecture, (![X]: (q(X) => p(X)) & q(a) => p(a))).
+fof(test185, conjecture, (s => (s | p))).
+fof(test186, conjecture, (p => (p | s))).
+fof(test187, conjecture, (q => ~~q)).
+fof(test188, conjecture, (((p & s) | (p & r)) => (p & (s | r)))).
+fof(test189, conjecture, (![X]: (p(X) => q(X)) & p(a) => q(a))).
+fof(test190, conjecture, (r => (q => r))).
+fof(test191, conjecture, ((q | s) => (s | q))).
+fof(test192, conjecture, ((s & r) => r)).
+fof(test193, conjecture, (((r | s) & ~r) => s)).
+fof(test194, conjecture, ((r & p) => p)).
+fof(test195, conjecture, ((q => (s => r)) => (s => (q => r)))).
+fof(test196, conjecture, ((q & r) => r)).
+fof(test197, conjecture, (((r => s) & (~r => s)) => s)).
+fof(test198, conjecture, (r => ~~r)).
+fof(test199, conjecture, (((p => q) & (q => s)) => (p => s))).
+fof(test200, conjecture, ((s & (p | q)) => ((s & p) | (s & q)))).
+fof(test201, conjecture, ((r & s) => s)).
+fof(test202, conjecture, (((p | s) & ~p) => s)).
+fof(test203, conjecture, (~~q => q)).
+fof(test204, conjecture, ((p & r) => (r & p))).
+fof(test205, conjecture, (?[X]: r(X) => ?[Y]: r(Y))).
+fof(test206, conjecture, ((p & r) => (r & p))).
+fof(test207, conjecture, ((r & p) => r)).
+fof(test208, conjecture, (r => ~~r)).
+fof(test209, conjecture, (r | ~r)).
+fof(test210, conjecture, ((q | r) => (r | q))).
+fof(test211, conjecture, ((p | q) => (q | p))).
+fof(test212, conjecture, ((s => q) => (~q => ~s))).
+fof(test213, conjecture, (q => ~~q)).
+fof(test214, conjecture, ((q & p) => p)).
+fof(test215, conjecture, (s(a) => ?[X]: s(X))).
+fof(test216, conjecture, (p | ~p)).
+fof(test217, conjecture, (((r & p) | (r & q)) => (r & (p | q)))).
+fof(test218, conjecture, ((r => p) => (~p => ~r))).
+fof(test219, conjecture, (r => (q => r))).
+fof(test220, conjecture, (?[X]: s(X) => ?[Y]: s(Y))).
+fof(test221, conjecture, (?[X]: q(X) => ?[Y]: q(Y))).
+fof(test222, conjecture, (s => (s | p))).
+fof(test223, conjecture, (((p => q) & (q => s)) => (p => s))).
+fof(test224, conjecture, (((q & p) | (q & s)) => (q & (p | s)))).
+fof(test225, conjecture, (((s | r) & ~s) => r)).
+fof(test226, conjecture, ((s & r) => r)).
+fof(test227, conjecture, ((p & r) => r)).
+fof(test228, conjecture, (~~s => s)).
+fof(test229, conjecture, ((q & p) => (p & q))).
+fof(test230, conjecture, ((r => q) => (~q => ~r))).
+fof(test231, conjecture, (p(a) => ?[X]: p(X))).
+fof(test232, conjecture, (![X]: r(X) => ?[X]: r(X))).
+fof(test233, conjecture, (((r & s) | (r & p)) => (r & (s | p)))).
+fof(test234, conjecture, ((s & (q | r)) => ((s & q) | (s & r)))).
+fof(test235, conjecture, ((r | q) => (q | r))).
+fof(test236, conjecture, ((p => (r => s)) => (r => (p => s)))).
+fof(test237, conjecture, ((s & q) => s)).
+fof(test238, conjecture, (![X]: p(X) => ?[X]: p(X))).
+fof(test239, conjecture, ((p | s) => (s | p))).
+fof(test240, conjecture, ((r | p) => (p | r))).
+fof(test241, conjecture, ((q & (p | r)) => ((q & p) | (q & r)))).
+fof(test242, conjecture, ((s => r) => (~r => ~s))).
+fof(test243, conjecture, ((r & q) => (q & r))).
+fof(test244, conjecture, ((p | s) => (s | p))).
+fof(test245, conjecture, (p => (p | s))).
+fof(test246, conjecture, (((q | p) & ~q) => p)).
+fof(test247, conjecture, ((r & (s | q)) => ((r & s) | (r & q)))).
+fof(test248, conjecture, (r(a) => ?[X]: r(X))).
+fof(test249, conjecture, ((s & r) => r)).
+fof(test250, conjecture, ((r & s) => r)).
+fof(test251, conjecture, (((r => p) & (p => s)) => (r => s))).
+fof(test252, conjecture, (((p & q) | (p & s)) => (p & (q | s)))).
+fof(test253, conjecture, (q => (q | r))).
+fof(test254, conjecture, (((q => s) & (s => r)) => (q => r))).
+fof(test255, conjecture, ((s & q) => (q & s))).
+fof(test256, conjecture, ((s & r) => s)).
+fof(test257, conjecture, ((q & (r | s)) => ((q & r) | (q & s)))).
+fof(test258, conjecture, ((q & (s | r)) => ((q & s) | (q & r)))).
+fof(test259, conjecture, ((r | p) => (p | r))).
+fof(test260, conjecture, (r | ~r)).
+fof(test261, conjecture, (q => q)).
+fof(test262, conjecture, (~~q => q)).
+fof(test263, conjecture, (?[X]: q(X) => ?[Y]: q(Y))).
+fof(test264, conjecture, (r => (r | p))).
+fof(test265, conjecture, (((s & q) | (s & p)) => (s & (q | p)))).
+fof(test266, conjecture, (q | ~q)).
+fof(test267, conjecture, ((s & r) => (r & s))).
+fof(test268, conjecture, (r(a) => ?[X]: r(X))).
+fof(test269, conjecture, (![X]: (r(X) => p(X)) & r(a) => p(a))).
+fof(test270, conjecture, (((r => q) & (~r => q)) => q)).
+fof(test271, conjecture, ((p & (q | r)) => ((p & q) | (p & r)))).
+fof(test272, conjecture, ((s => (r => p)) => (r => (s => p)))).
+fof(test273, conjecture, ((r => s) => (~s => ~r))).
+fof(test274, conjecture, ((q & p) => q)).
+fof(test275, conjecture, ((s => (r => q)) => (r => (s => q)))).
+fof(test276, conjecture, (s => s)).
+fof(test277, conjecture, (r => r)).
+fof(test278, conjecture, ((r & (p | q)) => ((r & p) | (r & q)))).
+fof(test279, conjecture, (((p => s) & (s => r)) => (p => r))).
+fof(test280, conjecture, (p | ~p)).
+fof(test281, conjecture, (![X]: q(X) => q(a))).
+fof(test282, conjecture, (s => (q => s))).
+fof(test283, conjecture, (r => (r | p))).
+fof(test284, conjecture, (p | ~p)).
+fof(test285, conjecture, (r(a) => ?[X]: r(X))).
+fof(test286, conjecture, (p | ~p)).
+fof(test287, conjecture, (q(a) => ?[X]: q(X))).
+fof(test288, conjecture, (p => (p | q))).
+fof(test289, conjecture, ((q & r) => q)).
+fof(test290, conjecture, (q => (r => q))).
+fof(test291, conjecture, (![X]: (p(X) => r(X)) & p(a) => r(a))).
+fof(test292, conjecture, (r => (r | s))).
+fof(test293, conjecture, (p => p)).
+fof(test294, conjecture, (p(a) => ?[X]: p(X))).
+fof(test295, conjecture, ((r & s) => (s & r))).
+fof(test296, conjecture, (![X]: p(X) => ?[X]: p(X))).
+fof(test297, conjecture, (s => (p => s))).
+fof(test298, conjecture, (p(a) => ?[X]: p(X))).
+fof(test299, conjecture, ((p & (s | q)) => ((p & s) | (p & q)))).
+fof(test300, conjecture, (((p => q) & (s => q)) => ((p | s) => q))).
+fof(test301, conjecture, (~~r => r)).
+fof(test302, conjecture, (((p & q) | (p & r)) => (p & (q | r)))).
+fof(test303, conjecture, (![X]: s(X) => ?[X]: s(X))).
+fof(test304, conjecture, (![X]: r(X) => ?[X]: r(X))).
+fof(test305, conjecture, (s => (s | q))).
+fof(test306, conjecture, (p => (p | s))).
+fof(test307, conjecture, ((s & (p | q)) => ((s & p) | (s & q)))).
+fof(test308, conjecture, (?[X]: r(X) => ?[Y]: r(Y))).
+fof(test309, conjecture, (s(a) => ?[X]: s(X))).
+fof(test310, conjecture, ((q & p) => (p & q))).
+fof(test311, conjecture, ((q | r) => (r | q))).
+fof(test312, conjecture, ((r => q) => (~q => ~r))).
+fof(test313, conjecture, ((p => q) => (~q => ~p))).
+fof(test314, conjecture, (s | ~s)).
+fof(test315, conjecture, (![X]: p(X) => p(a))).
+fof(test316, conjecture, ((s | q) => (q | s))).
+fof(test317, conjecture, ((s => (r => p)) => (r => (s => p)))).
+fof(test318, conjecture, (~~r => r)).
+fof(test319, conjecture, (((q => p) & (p => r)) => (q => r))).
+fof(test320, conjecture, (((q | s) & ~q) => s)).
+fof(test321, conjecture, (((s | r) & ~s) => r)).
+fof(test322, conjecture, (q => (s => q))).
+fof(test323, conjecture, ((s | p) => (p | s))).
+fof(test324, conjecture, (((q & r) | (q & s)) => (q & (r | s)))).
+fof(test325, conjecture, ((r & q) => r)).
+fof(test326, conjecture, ((q & p) => p)).
+fof(test327, conjecture, (![X]: q(X) => q(a))).
+fof(test328, conjecture, ((p => s) => (~s => ~p))).
+fof(test329, conjecture, ((q | p) => (p | q))).
+fof(test330, conjecture, (((r | q) & ~r) => q)).
+fof(test331, conjecture, (s => (s | r))).
+fof(test332, conjecture, ((r & q) => q)).
+fof(test333, conjecture, (~~s => s)).
+fof(test334, conjecture, (p => (p | s))).
+fof(test335, conjecture, (?[X]: s(X) => ?[Y]: s(Y))).
+fof(test336, conjecture, (~~s => s)).
+fof(test337, conjecture, (~~p => p)).
+fof(test338, conjecture, (((p => q) & (~p => q)) => q)).
+fof(test339, conjecture, ((s & (q | r)) => ((s & q) | (s & r)))).
+fof(test340, conjecture, (p(a) => ?[X]: p(X))).
+fof(test341, conjecture, (q => q)).
+fof(test342, conjecture, (((p | r) & ~p) => r)).
+fof(test343, conjecture, ((q & s) => q)).
+fof(test344, conjecture, (q => (r => q))).
+fof(test345, conjecture, (((p | q) & ~p) => q)).
+fof(test346, conjecture, (((p & r) | (p & q)) => (p & (r | q)))).
+fof(test347, conjecture, ((s & q) => q)).
+fof(test348, conjecture, ((r => s) => (~s => ~r))).
+fof(test349, conjecture, (((r | s) & ~r) => s)).
+fof(test350, conjecture, ((s | q) => (q | s))).
+fof(test351, conjecture, (![X]: q(X) => q(a))).
+fof(test352, conjecture, (q => (r => q))).
+fof(test353, conjecture, ((r => (s => p)) => (s => (r => p)))).
+fof(test354, conjecture, ((r | p) => (p | r))).
+fof(test355, conjecture, (((p => r) & (q => r)) => ((p | q) => r))).
+fof(test356, conjecture, (q | ~q)).
+fof(test357, conjecture, (r(a) => ?[X]: r(X))).
+fof(test358, conjecture, (?[X]: p(X) => ?[Y]: p(Y))).
+fof(test359, conjecture, (((s | q) & ~s) => q)).
+fof(test360, conjecture, (~~r => r)).
+fof(test361, conjecture, (((q => r) & (s => r)) => ((q | s) => r))).
+fof(test362, conjecture, (((r => q) & (~r => q)) => q)).
+fof(test363, conjecture, (r => ~~r)).
+fof(test364, conjecture, (p(a) => ?[X]: p(X))).
+fof(test365, conjecture, (((s & p) | (s & q)) => (s & (p | q)))).
+fof(test366, conjecture, ((q & s) => s)).
+fof(test367, conjecture, (((p & s) | (p & r)) => (p & (s | r)))).
+fof(test368, conjecture, ((r | p) => (p | r))).
+fof(test369, conjecture, ((q => p) => (~p => ~q))).
+fof(test370, conjecture, (s => (s | r))).
+fof(test371, conjecture, ((q | r) => (r | q))).
+fof(test372, conjecture, (![X]: (r(X) => q(X)) & r(a) => q(a))).
+fof(test373, conjecture, (p => p)).
+fof(test374, conjecture, (![X]: (p(X) => q(X)) & p(a) => q(a))).
+fof(test375, conjecture, (q => (q | r))).
+fof(test376, conjecture, ((p | s) => (s | p))).
+fof(test377, conjecture, ((p | r) => (r | p))).
+fof(test378, conjecture, (((r => s) & (~r => s)) => s)).
+fof(test379, conjecture, (![X]: (s(X) => q(X)) & s(a) => q(a))).
+fof(test380, conjecture, (((q => r) & (r => p)) => (q => p))).
+fof(test381, conjecture, (((r => q) & (~r => q)) => q)).
+fof(test382, conjecture, (((q => r) & (~q => r)) => r)).
+fof(test383, conjecture, (((r & q) | (r & p)) => (r & (q | p)))).
+fof(test384, conjecture, (s => (q => s))).
+fof(test385, conjecture, (p => (p | q))).
+fof(test386, conjecture, (((p => s) & (s => r)) => (p => r))).
+fof(test387, conjecture, (r => ~~r)).
+fof(test388, conjecture, (p | ~p)).
+fof(test389, conjecture, (?[X]: s(X) => ?[Y]: s(Y))).
+fof(test390, conjecture, (((r => p) & (q => p)) => ((r | q) => p))).
+fof(test391, conjecture, (![X]: q(X) => q(a))).
+fof(test392, conjecture, (![X]: (s(X) => q(X)) & s(a) => q(a))).
+fof(test393, conjecture, (((s => r) & (~s => r)) => r)).
+fof(test394, conjecture, (~~p => p)).
+fof(test395, conjecture, (((q => p) & (p => r)) => (q => r))).
+fof(test396, conjecture, (((p & s) | (p & r)) => (p & (s | r)))).
+fof(test397, conjecture, (s(a) => ?[X]: s(X))).
+fof(test398, conjecture, (~~r => r)).
+fof(test399, conjecture, (?[X]: q(X) => ?[Y]: q(Y))).
+fof(test400, conjecture, (((q | s) & ~q) => s)).
+fof(test401, conjecture, ((q & (r | s)) => ((q & r) | (q & s)))).
+fof(test402, conjecture, (~~r => r)).
+fof(test403, conjecture, (~~s => s)).
+fof(test404, conjecture, (q => ~~q)).
+fof(test405, conjecture, ((q | s) => (s | q))).
+fof(test406, conjecture, (((p => s) & (~p => s)) => s)).
+fof(test407, conjecture, (((q => p) & (~q => p)) => p)).
+fof(test408, conjecture, (((q => p) & (~q => p)) => p)).
+fof(test409, conjecture, (p(a) => ?[X]: p(X))).
+fof(test410, conjecture, (s => s)).
+fof(test411, conjecture, (![X]: (s(X) => q(X)) & s(a) => q(a))).
+fof(test412, conjecture, ((r & p) => p)).
+fof(test413, conjecture, ((p & s) => p)).
+fof(test414, conjecture, ((p & r) => (r & p))).
+fof(test415, conjecture, ((q & r) => r)).
+fof(test416, conjecture, (p(a) => ?[X]: p(X))).
+fof(test417, conjecture, (?[X]: p(X) => ?[Y]: p(Y))).
+fof(test418, conjecture, (r(a) => ?[X]: r(X))).
+fof(test419, conjecture, (s => (s | p))).
+fof(test420, conjecture, (![X]: r(X) => r(a))).
+fof(test421, conjecture, ((q & (p | s)) => ((q & p) | (q & s)))).
+fof(test422, conjecture, (((q => s) & (s => p)) => (q => p))).
+fof(test423, conjecture, ((q => s) => (~s => ~q))).
+fof(test424, conjecture, ((q & (p | s)) => ((q & p) | (q & s)))).
+fof(test425, conjecture, ((p | s) => (s | p))).
+fof(test426, conjecture, (s | ~s)).
+fof(test427, conjecture, (((r & q) | (r & p)) => (r & (q | p)))).
+fof(test428, conjecture, (?[X]: p(X) => ?[Y]: p(Y))).
+fof(test429, conjecture, (~~r => r)).
+fof(test430, conjecture, (q(a) => ?[X]: q(X))).
+fof(test431, conjecture, (s => s)).
+fof(test432, conjecture, ((p & s) => (s & p))).
+fof(test433, conjecture, (![X]: (p(X) => r(X)) & p(a) => r(a))).
+fof(test434, conjecture, (((s & r) | (s & p)) => (s & (r | p)))).
+fof(test435, conjecture, (q(a) => ?[X]: q(X))).
+fof(test436, conjecture, (((p & q) | (p & s)) => (p & (q | s)))).
+fof(test437, conjecture, (![X]: (s(X) => q(X)) & s(a) => q(a))).
+fof(test438, conjecture, (p => (p | q))).
+fof(test439, conjecture, (~~q => q)).
+fof(test440, conjecture, (![X]: s(X) => s(a))).
+fof(test441, conjecture, ((q & p) => q)).
+fof(test442, conjecture, ((p & r) => r)).
+fof(test443, conjecture, ((p & q) => p)).
+fof(test444, conjecture, (s => (q => s))).
+fof(test445, conjecture, (((p => r) & (~p => r)) => r)).
+fof(test446, conjecture, (s => (s | p))).
+fof(test447, conjecture, (![X]: r(X) => ?[X]: r(X))).
+fof(test448, conjecture, ((q => s) => (~s => ~q))).
+fof(test449, conjecture, (?[X]: p(X) => ?[Y]: p(Y))).
+fof(test450, conjecture, ((r => q) => (~q => ~r))).
+fof(test451, conjecture, (![X]: (q(X) => r(X)) & q(a) => r(a))).
+fof(test452, conjecture, ((q => (p => s)) => (p => (q => s)))).
+fof(test453, conjecture, (![X]: (s(X) => r(X)) & s(a) => r(a))).
+fof(test454, conjecture, (p | ~p)).
+fof(test455, conjecture, (((p => q) & (r => q)) => ((p | r) => q))).
+fof(test456, conjecture, (q => (r => q))).
+fof(test457, conjecture, (~~p => p)).
+fof(test458, conjecture, ((p & s) => s)).
+fof(test459, conjecture, (r => (r | s))).
+fof(test460, conjecture, (![X]: q(X) => q(a))).
+fof(test461, conjecture, ((p | r) => (r | p))).
+fof(test462, conjecture, ((p => q) => (~q => ~p))).
+fof(test463, conjecture, (((q & r) | (q & s)) => (q & (r | s)))).
+fof(test464, conjecture, ((r | p) => (p | r))).
+fof(test465, conjecture, ((s => p) => (~p => ~s))).
+fof(test466, conjecture, (q(a) => ?[X]: q(X))).
+fof(test467, conjecture, ((p => r) => (~r => ~p))).
+fof(test468, conjecture, ((q => (p => s)) => (p => (q => s)))).
+fof(test469, conjecture, (r => (r | s))).
+fof(test470, conjecture, (((p => r) & (s => r)) => ((p | s) => r))).
+fof(test471, conjecture, (s => ~~s)).
+fof(test472, conjecture, (((p & q) | (p & r)) => (p & (q | r)))).
+fof(test473, conjecture, ((q & r) => r)).
+fof(test474, conjecture, (![X]: (s(X) => q(X)) & s(a) => q(a))).
+fof(test475, conjecture, ((s => (r => q)) => (r => (s => q)))).
+fof(test476, conjecture, (~~s => s)).
+fof(test477, conjecture, (((q => s) & (p => s)) => ((q | p) => s))).
+fof(test478, conjecture, (![X]: r(X) => r(a))).
+fof(test479, conjecture, (r => ~~r)).
+fof(test480, conjecture, (((s => r) & (~s => r)) => r)).
+fof(test481, conjecture, ((r & q) => q)).
+fof(test482, conjecture, ((q & r) => (r & q))).
+fof(test483, conjecture, ((q | r) => (r | q))).
+fof(test484, conjecture, (((r => q) & (q => p)) => (r => p))).
+fof(test485, conjecture, (((p => r) & (~p => r)) => r)).
+fof(test486, conjecture, (![X]: p(X) => ?[X]: p(X))).
+fof(test487, conjecture, (r => r)).
+fof(test488, conjecture, ((s & q) => q)).
+fof(test489, conjecture, ((s & (q | p)) => ((s & q) | (s & p)))).
+fof(test490, conjecture, ((s => r) => (~r => ~s))).
+fof(test491, conjecture, ((p & s) => (s & p))).
+fof(test492, conjecture, (q => ~~q)).
+fof(test493, conjecture, (q => ~~q)).
+fof(test494, conjecture, (~~r => r)).
+fof(test495, conjecture, (((s => q) & (r => q)) => ((s | r) => q))).
+fof(test496, conjecture, (?[X]: q(X) => ?[Y]: q(Y))).
+fof(test497, conjecture, ((q & p) => (p & q))).
+fof(test498, conjecture, ((p & s) => (s & p))).
+fof(test499, conjecture, (s => s)).
+fof(test500, conjecture, (r => (s => r))).
+fof(test501, conjecture, (~~q => q)).
+fof(test502, conjecture, (p | ~p)).
+fof(test503, conjecture, (![X]: s(X) => ?[X]: s(X))).
+fof(test504, conjecture, (p => p)).
+fof(test505, conjecture, ((q & r) => (r & q))).
+fof(test506, conjecture, ((s => (p => q)) => (p => (s => q)))).
+fof(test507, conjecture, (((q | p) & ~q) => p)).
+fof(test508, conjecture, (~~p => p)).
+fof(test509, conjecture, ((s & q) => (q & s))).
+fof(test510, conjecture, (![X]: (p(X) => q(X)) & p(a) => q(a))).
+fof(test511, conjecture, ((s => q) => (~q => ~s))).
+fof(test512, conjecture, ((s & (q | p)) => ((s & q) | (s & p)))).
+fof(test513, conjecture, (?[X]: r(X) => ?[Y]: r(Y))).
+fof(test514, conjecture, (![X]: s(X) => s(a))).
+fof(test515, conjecture, (((p => s) & (s => q)) => (p => q))).
+fof(test516, conjecture, (s => ~~s)).
+fof(test517, conjecture, (((s => p) & (r => p)) => ((s | r) => p))).
+fof(test518, conjecture, (![X]: s(X) => ?[X]: s(X))).
+fof(test519, conjecture, (((q & p) | (q & r)) => (q & (p | r)))).
+fof(test520, conjecture, (((r & s) | (r & p)) => (r & (s | p)))).
+fof(test521, conjecture, (((r => p) & (p => s)) => (r => s))).
+fof(test522, conjecture, ((p & (s | q)) => ((p & s) | (p & q)))).
+fof(test523, conjecture, (![X]: (r(X) => q(X)) & r(a) => q(a))).
+fof(test524, conjecture, (![X]: (p(X) => q(X)) & p(a) => q(a))).
+fof(test525, conjecture, (![X]: q(X) => ?[X]: q(X))).
+fof(test526, conjecture, ((s => (q => r)) => (q => (s => r)))).
+fof(test527, conjecture, ((q & p) => p)).
+fof(test528, conjecture, ((q & (r | p)) => ((q & r) | (q & p)))).
+fof(test529, conjecture, (((q => r) & (r => p)) => (q => p))).
+fof(test530, conjecture, (p(a) => ?[X]: p(X))).
+fof(test531, conjecture, (((q => s) & (s => r)) => (q => r))).
+fof(test532, conjecture, ((q => (r => s)) => (r => (q => s)))).
+fof(test533, conjecture, (s => (q => s))).
+fof(test534, conjecture, (![X]: s(X) => s(a))).
+fof(test535, conjecture, ((r & s) => s)).
+fof(test536, conjecture, (![X]: s(X) => ?[X]: s(X))).
+fof(test537, conjecture, (![X]: q(X) => ?[X]: q(X))).
+fof(test538, conjecture, (s(a) => ?[X]: s(X))).
+fof(test539, conjecture, (![X]: q(X) => q(a))).
+fof(test540, conjecture, (((q => r) & (~q => r)) => r)).
+fof(test541, conjecture, (((r => p) & (p => q)) => (r => q))).
+fof(test542, conjecture, (q => (q | s))).
+fof(test543, conjecture, (p(a) => ?[X]: p(X))).
+fof(test544, conjecture, (r | ~r)).
+fof(test545, conjecture, ((p & (s | r)) => ((p & s) | (p & r)))).
+fof(test546, conjecture, (~~r => r)).
+fof(test547, conjecture, (((q & s) | (q & p)) => (q & (s | p)))).
+fof(test548, conjecture, (q => (q | r))).
+fof(test549, conjecture, (![X]: r(X) => r(a))).
+fof(test550, conjecture, ((s & p) => (p & s))).
+fof(test551, conjecture, ((q & (s | r)) => ((q & s) | (q & r)))).
+fof(test552, conjecture, ((s & q) => s)).
+fof(test553, conjecture, (?[X]: r(X) => ?[Y]: r(Y))).
+fof(test554, conjecture, ((s => q) => (~q => ~s))).
+fof(test555, conjecture, (q => (q | r))).
+fof(test556, conjecture, ((q & r) => q)).
+fof(test557, conjecture, ((s => (q => r)) => (q => (s => r)))).
+fof(test558, conjecture, (((q => s) & (r => s)) => ((q | r) => s))).
+fof(test559, conjecture, ((q & (p | s)) => ((q & p) | (q & s)))).
+fof(test560, conjecture, (((s => p) & (p => q)) => (s => q))).
+fof(test561, conjecture, (![X]: q(X) => q(a))).
+fof(test562, conjecture, ((p & q) => (q & p))).
+fof(test563, conjecture, ((q & (s | r)) => ((q & s) | (q & r)))).
+fof(test564, conjecture, (((q => s) & (p => s)) => ((q | p) => s))).
+fof(test565, conjecture, ((p & s) => (s & p))).
+fof(test566, conjecture, (p(a) => ?[X]: p(X))).
+fof(test567, conjecture, ((r & (p | s)) => ((r & p) | (r & s)))).
+fof(test568, conjecture, ((q & p) => q)).
+fof(test569, conjecture, (![X]: p(X) => ?[X]: p(X))).
+fof(test570, conjecture, (p => ~~p)).
+fof(test571, conjecture, (((p | r) & ~p) => r)).
+fof(test572, conjecture, (p => ~~p)).
+fof(test573, conjecture, (![X]: q(X) => q(a))).
+fof(test574, conjecture, (((p => s) & (q => s)) => ((p | q) => s))).
+fof(test575, conjecture, (((r => p) & (~r => p)) => p)).
+fof(test576, conjecture, (r(a) => ?[X]: r(X))).
+fof(test577, conjecture, ((r => q) => (~q => ~r))).
+fof(test578, conjecture, (((q | r) & ~q) => r)).
+fof(test579, conjecture, ((p & r) => (r & p))).
+fof(test580, conjecture, ((p => q) => (~q => ~p))).
+fof(test581, conjecture, (((q | s) & ~q) => s)).
+fof(test582, conjecture, (?[X]: p(X) => ?[Y]: p(Y))).
+fof(test583, conjecture, (((r & s) | (r & q)) => (r & (s | q)))).
+fof(test584, conjecture, ((r => q) => (~q => ~r))).
+fof(test585, conjecture, (![X]: q(X) => q(a))).
+fof(test586, conjecture, (r => (q => r))).
+fof(test587, conjecture, ((p & s) => p)).
+fof(test588, conjecture, (q => q)).
+fof(test589, conjecture, (![X]: (p(X) => r(X)) & p(a) => r(a))).
+fof(test590, conjecture, (~~p => p)).
+fof(test591, conjecture, (q => (q | r))).
+fof(test592, conjecture, ((p & q) => p)).
+fof(test593, conjecture, ((s => r) => (~r => ~s))).
+fof(test594, conjecture, (q => (p => q))).
+fof(test595, conjecture, (q => ~~q)).
+fof(test596, conjecture, (r => (p => r))).
+fof(test597, conjecture, (p | ~p)).
+fof(test598, conjecture, ((s & r) => (r & s))).
+fof(test599, conjecture, ((p & (s | q)) => ((p & s) | (p & q)))).
+fof(test600, conjecture, (![X]: (s(X) => q(X)) & s(a) => q(a))).
+fof(test601, conjecture, (![X]: q(X) => q(a))).
+fof(test602, conjecture, (![X]: q(X) => q(a))).
+fof(test603, conjecture, ((r => q) => (~q => ~r))).
+fof(test604, conjecture, (((q => p) & (~q => p)) => p)).
+fof(test605, conjecture, (![X]: (s(X) => p(X)) & s(a) => p(a))).
+fof(test606, conjecture, (r => (r | q))).
+fof(test607, conjecture, (![X]: (s(X) => p(X)) & s(a) => p(a))).
+fof(test608, conjecture, ((p & s) => p)).
+fof(test609, conjecture, (q => (q | s))).
+fof(test610, conjecture, (((p & s) | (p & q)) => (p & (s | q)))).
+fof(test611, conjecture, (((p & q) | (p & r)) => (p & (q | r)))).
+fof(test612, conjecture, (p | ~p)).
+fof(test613, conjecture, (?[X]: p(X) => ?[Y]: p(Y))).
+fof(test614, conjecture, ((s & (q | r)) => ((s & q) | (s & r)))).
+fof(test615, conjecture, (((s => p) & (p => q)) => (s => q))).
+fof(test616, conjecture, (p | ~p)).
+fof(test617, conjecture, ((q => s) => (~s => ~q))).
+fof(test618, conjecture, (p => (q => p))).
+fof(test619, conjecture, (((s | p) & ~s) => p)).
+fof(test620, conjecture, (r => r)).
+fof(test621, conjecture, (~~r => r)).
+fof(test622, conjecture, (p => (r => p))).
+fof(test623, conjecture, (q => ~~q)).
+fof(test624, conjecture, (((r => q) & (~r => q)) => q)).
+fof(test625, conjecture, ((s => r) => (~r => ~s))).
+fof(test626, conjecture, (p => (p | s))).
+fof(test627, conjecture, (?[X]: r(X) => ?[Y]: r(Y))).
+fof(test628, conjecture, ((s => (p => q)) => (p => (s => q)))).
+fof(test629, conjecture, (q | ~q)).
+fof(test630, conjecture, (![X]: q(X) => ?[X]: q(X))).
+fof(test631, conjecture, ((s => r) => (~r => ~s))).
+fof(test632, conjecture, ((r | q) => (q | r))).
+fof(test633, conjecture, (![X]: r(X) => ?[X]: r(X))).
+fof(test634, conjecture, (s => s)).
+fof(test635, conjecture, (((s & q) | (s & r)) => (s & (q | r)))).
+fof(test636, conjecture, (![X]: (r(X) => q(X)) & r(a) => q(a))).
+fof(test637, conjecture, (q => (r => q))).
+fof(test638, conjecture, (![X]: q(X) => ?[X]: q(X))).
+fof(test639, conjecture, (((p | s) & ~p) => s)).
+fof(test640, conjecture, (((p | r) & ~p) => r)).
+fof(test641, conjecture, (![X]: (p(X) => s(X)) & p(a) => s(a))).
+fof(test642, conjecture, (((s => r) & (r => q)) => (s => q))).
+fof(test643, conjecture, (![X]: p(X) => p(a))).
+fof(test644, conjecture, (((q & r) | (q & p)) => (q & (r | p)))).
+fof(test645, conjecture, (q => (q | p))).
+fof(test646, conjecture, ((q & s) => s)).
+fof(test647, conjecture, (![X]: p(X) => ?[X]: p(X))).
+fof(test648, conjecture, (![X]: (q(X) => s(X)) & q(a) => s(a))).
+fof(test649, conjecture, ((r & p) => (p & r))).
+fof(test650, conjecture, (((q => r) & (p => r)) => ((q | p) => r))).
+fof(test651, conjecture, (![X]: (r(X) => p(X)) & r(a) => p(a))).
+fof(test652, conjecture, (((r => s) & (s => p)) => (r => p))).
+fof(test653, conjecture, (![X]: (r(X) => s(X)) & r(a) => s(a))).
+fof(test654, conjecture, (s => (s | r))).
+fof(test655, conjecture, (((s & p) | (s & q)) => (s & (p | q)))).
+fof(test656, conjecture, (r | ~r)).
+fof(test657, conjecture, (?[X]: r(X) => ?[Y]: r(Y))).
+fof(test658, conjecture, (?[X]: p(X) => ?[Y]: p(Y))).
+fof(test659, conjecture, ((s & (r | q)) => ((s & r) | (s & q)))).
+fof(test660, conjecture, (![X]: s(X) => s(a))).
+fof(test661, conjecture, (((q => r) & (~q => r)) => r)).
+fof(test662, conjecture, ((r => (p => q)) => (p => (r => q)))).
+fof(test663, conjecture, (((q => s) & (s => p)) => (q => p))).
+fof(test664, conjecture, (((p => q) & (~p => q)) => q)).
+fof(test665, conjecture, (((s & r) | (s & p)) => (s & (r | p)))).
+fof(test666, conjecture, (![X]: (q(X) => s(X)) & q(a) => s(a))).
+fof(test667, conjecture, (((q => r) & (~q => r)) => r)).
+fof(test668, conjecture, ((q => p) => (~p => ~q))).
+fof(test669, conjecture, (((p => s) & (s => q)) => (p => q))).
+fof(test670, conjecture, ((s | r) => (r | s))).
+fof(test671, conjecture, ((r => s) => (~s => ~r))).
+fof(test672, conjecture, (((r | p) & ~r) => p)).
+fof(test673, conjecture, (r(a) => ?[X]: r(X))).
+fof(test674, conjecture, ((s => (q => r)) => (q => (s => r)))).
+fof(test675, conjecture, (r => ~~r)).
+fof(test676, conjecture, (~~s => s)).
+fof(test677, conjecture, ((q & (r | p)) => ((q & r) | (q & p)))).
+fof(test678, conjecture, ((s | p) => (p | s))).
+fof(test679, conjecture, (s => (s | p))).
+fof(test680, conjecture, (((s & q) | (s & r)) => (s & (q | r)))).
+fof(test681, conjecture, (![X]: (r(X) => p(X)) & r(a) => p(a))).
+fof(test682, conjecture, (((p | r) & ~p) => r)).
+fof(test683, conjecture, (((r => p) & (s => p)) => ((r | s) => p))).
+fof(test684, conjecture, ((r => p) => (~p => ~r))).
+fof(test685, conjecture, ((p & (q | s)) => ((p & q) | (p & s)))).
+fof(test686, conjecture, (((p => q) & (~p => q)) => q)).
+fof(test687, conjecture, ((p | r) => (r | p))).
+fof(test688, conjecture, ((s & r) => (r & s))).
+fof(test689, conjecture, (s => (r => s))).
+fof(test690, conjecture, (s => s)).
+fof(test691, conjecture, (p => (p | q))).
+fof(test692, conjecture, (![X]: (p(X) => r(X)) & p(a) => r(a))).
+fof(test693, conjecture, (s(a) => ?[X]: s(X))).
+fof(test694, conjecture, ((p => (q => s)) => (q => (p => s)))).
+fof(test695, conjecture, ((s & q) => s)).
+fof(test696, conjecture, (((s & p) | (s & q)) => (s & (p | q)))).
+fof(test697, conjecture, ((q & s) => (s & q))).
+fof(test698, conjecture, (r(a) => ?[X]: r(X))).
+fof(test699, conjecture, ((s => (r => p)) => (r => (s => p)))).
+fof(test700, conjecture, ((q & (s | p)) => ((q & s) | (q & p)))).
+fof(test701, conjecture, (((s => q) & (r => q)) => ((s | r) => q))).
+fof(test702, conjecture, ((q & p) => q)).
+fof(test703, conjecture, (q => (r => q))).
+fof(test704, conjecture, (?[X]: r(X) => ?[Y]: r(Y))).
+fof(test705, conjecture, (((r | s) & ~r) => s)).
+fof(test706, conjecture, ((s & p) => s)).
+fof(test707, conjecture, ((r => p) => (~p => ~r))).
+fof(test708, conjecture, (((p => r) & (~p => r)) => r)).
+fof(test709, conjecture, ((s & p) => s)).
+fof(test710, conjecture, ((q | p) => (p | q))).
+fof(test711, conjecture, (((r => s) & (s => q)) => (r => q))).
+fof(test712, conjecture, (((s => p) & (~s => p)) => p)).
+fof(test713, conjecture, ((p & q) => p)).
+fof(test714, conjecture, (r => (p => r))).
+fof(test715, conjecture, (((s => r) & (r => p)) => (s => p))).
+fof(test716, conjecture, ((s => (r => p)) => (r => (s => p)))).
+fof(test717, conjecture, (![X]: (p(X) => q(X)) & p(a) => q(a))).
+fof(test718, conjecture, (((p & r) | (p & s)) => (p & (r | s)))).
+fof(test719, conjecture, (((q | r) & ~q) => r)).
+fof(test720, conjecture, ((q & p) => p)).
+fof(test721, conjecture, (p => p)).
+fof(test722, conjecture, (![X]: q(X) => q(a))).
+fof(test723, conjecture, ((s & q) => (q & s))).
+fof(test724, conjecture, (![X]: p(X) => ?[X]: p(X))).
+fof(test725, conjecture, ((s | q) => (q | s))).
+fof(test726, conjecture, (((q => s) & (r => s)) => ((q | r) => s))).
+fof(test727, conjecture, (![X]: p(X) => p(a))).
+fof(test728, conjecture, (p | ~p)).
+fof(test729, conjecture, (((q & s) | (q & r)) => (q & (s | r)))).
+fof(test730, conjecture, ((r => (p => s)) => (p => (r => s)))).
+fof(test731, conjecture, (s(a) => ?[X]: s(X))).
+fof(test732, conjecture, (![X]: (q(X) => p(X)) & q(a) => p(a))).
+fof(test733, conjecture, (p => (q => p))).
+fof(test734, conjecture, (![X]: q(X) => ?[X]: q(X))).
+fof(test735, conjecture, (~~r => r)).
+fof(test736, conjecture, (r(a) => ?[X]: r(X))).
+fof(test737, conjecture, ((p & s) => s)).
+fof(test738, conjecture, ((r & q) => (q & r))).
+fof(test739, conjecture, (r => ~~r)).
+fof(test740, conjecture, (p => p)).
+fof(test741, conjecture, (?[X]: r(X) => ?[Y]: r(Y))).
+fof(test742, conjecture, (~~p => p)).
+fof(test743, conjecture, ((r & s) => s)).
+fof(test744, conjecture, (((s => r) & (r => q)) => (s => q))).
+fof(test745, conjecture, ((s & r) => s)).
+fof(test746, conjecture, ((r | s) => (s | r))).
+fof(test747, conjecture, (((p | s) & ~p) => s)).
+fof(test748, conjecture, (q => (q | s))).
+fof(test749, conjecture, (p => (p | s))).
+fof(test750, conjecture, ((q & p) => p)).
+fof(test751, conjecture, (s => (p => s))).
+fof(test752, conjecture, (?[X]: s(X) => ?[Y]: s(Y))).
+fof(test753, conjecture, (![X]: p(X) => ?[X]: p(X))).
+fof(test754, conjecture, (((q => p) & (~q => p)) => p)).
+fof(test755, conjecture, ((q => r) => (~r => ~q))).
+fof(test756, conjecture, (q => ~~q)).
+fof(test757, conjecture, (((q => r) & (~q => r)) => r)).
+fof(test758, conjecture, (r => r)).
+fof(test759, conjecture, (![X]: (q(X) => p(X)) & q(a) => p(a))).
+fof(test760, conjecture, (![X]: r(X) => r(a))).
+fof(test761, conjecture, (((r => p) & (~r => p)) => p)).
+fof(test762, conjecture, ((r | p) => (p | r))).
+fof(test763, conjecture, ((r | s) => (s | r))).
+fof(test764, conjecture, ((r => p) => (~p => ~r))).
+fof(test765, conjecture, (~~r => r)).
+fof(test766, conjecture, (s => (s | r))).
+fof(test767, conjecture, (p => (q => p))).
+fof(test768, conjecture, (![X]: p(X) => p(a))).
+fof(test769, conjecture, ((p & r) => (r & p))).
+fof(test770, conjecture, (![X]: (p(X) => s(X)) & p(a) => s(a))).
+fof(test771, conjecture, ((p & q) => p)).
+fof(test772, conjecture, (((p & s) | (p & r)) => (p & (s | r)))).
+fof(test773, conjecture, (((s => r) & (~s => r)) => r)).
+fof(test774, conjecture, (![X]: (q(X) => s(X)) & q(a) => s(a))).
+fof(test775, conjecture, (((s => q) & (~s => q)) => q)).
+fof(test776, conjecture, (~~s => s)).
+fof(test777, conjecture, (![X]: (r(X) => q(X)) & r(a) => q(a))).
+fof(test778, conjecture, ((s | p) => (p | s))).
+fof(test779, conjecture, (p => ~~p)).
+fof(test780, conjecture, (((q | p) & ~q) => p)).
+fof(test781, conjecture, (p => (p | q))).
+fof(test782, conjecture, (~~p => p)).
+fof(test783, conjecture, (r | ~r)).
+fof(test784, conjecture, (s => (q => s))).
+fof(test785, conjecture, ((q => r) => (~r => ~q))).
+fof(test786, conjecture, (~~s => s)).
+fof(test787, conjecture, ((q & (p | s)) => ((q & p) | (q & s)))).
+fof(test788, conjecture, ((s => (p => q)) => (p => (s => q)))).
+fof(test789, conjecture, (q => ~~q)).
+fof(test790, conjecture, (p(a) => ?[X]: p(X))).
+fof(test791, conjecture, (![X]: p(X) => ?[X]: p(X))).
+fof(test792, conjecture, (((r => s) & (~r => s)) => s)).
+fof(test793, conjecture, (s => (s | q))).
+fof(test794, conjecture, (r | ~r)).
+fof(test795, conjecture, ((r & q) => r)).
+fof(test796, conjecture, (?[X]: p(X) => ?[Y]: p(Y))).
+fof(test797, conjecture, ((p | r) => (r | p))).
+fof(test798, conjecture, ((p & s) => p)).
+fof(test799, conjecture, (p(a) => ?[X]: p(X))).
 fof(easy1, conjecture, (p => p)).
-
 fof(easy2, conjecture, ((p & q) => p)).
-
 fof(easy3, conjecture, (p | ~p)).
-
 fof(easy4, conjecture, (p => ~~p)).
-
 fof(easy5, conjecture, (p(a) => ?[X] : p(X))).
-
 fof(easy6, conjecture, (![X] : p(X) => p(a))).
-
 fof(identity_implication, conjecture, (((p => q) & (q => r)) => (p => r))).
-
 fof(double_negation, conjecture, (p => ~~p)).
-
 fof(simple_existential, conjecture, (p(a) => ?[X] : p(X))).
-
 fof(universal_instantiation, conjecture, (![X] : p(X) => p(a))).
-
-
-% Medium
 fof(med1, conjecture, ((p => q) => (~q => ~p))).
-
 fof(med2, conjecture, (((p | q) & ~p) => q)).
-
 fof(med3, conjecture, (((p => q) & (q => r)) => (p => r))).
-
 fof(med4, conjecture, (~(![X] : p(X)) => (?[X] : ~p(X)))).
-
 fof(med5, conjecture, (![X] : (p(X) & q(X)) => (![X] : p(X) & ![X] : q(X)))).
-
 fof(med6, conjecture, (![X] : (p(X) => q(X)) => (![X] : p(X) => ![X] : q(X)))).
-
 fof(med7, conjecture, (?[X] : (p(X) => ![Y] : p(Y)))).
-
 fof(pelletier_21, conjecture, (((p => q) & (m => n) & (p | m)) => (q | n))).
-
 fof(de_morgan_quantifier, conjecture, (~(![X] : p(X)) => (?[X] : ~p(X)))).
-
 fof(quantifier_dist_and, conjecture, (![X] : (p(X) & q(X)) => (![X] : p(X) & ![X] : q(X)))).
-
 fof(quantifier_monotonicity, conjecture, (![X] : (p(X) => q(X)) => (![X] : p(X) => ![X] : q(X)))).
-
 fof(drinker_paradox, conjecture, (?[X] : (p(X) => ![Y] : p(Y)))).
-
-% Hard
 fof(hard1, conjecture, ((![X] : p(X)) => ?[Y] : p(Y))).
-
 fof(hard2, conjecture, ((![X] : (p(X) => q(X)) & p(a)) => q(a))).
-
 fof(hard3, conjecture, ((![X] : (human(X) => mortal(X)) & human(socrates)) => mortal(socrates))).
-
 fof(hard4, conjecture, (?[X] : ?[Y] : r(X, Y) => ?[Y] : ?[X] : r(X, Y))).
-
 fof(hard5, conjecture, ((![X, Y, Z] : ((r(X, Y) & r(Y, Z)) => r(X, Z)) & r(a, b) & r(b, c)) => r(a, c))).
-
 fof(hard6, conjecture, (![X] : ?[Y] : p(X, Y) => ![Z] : ?[W] : p(Z, W))).
-
 fof(existential_commutativity, conjecture, (?[X] : ?[Y] : r(X, Y) => ?[Y] : ?[X] : r(X, Y))).
-
 fof(chain_implication, conjecture, ((![X] : (p(X) => q(X)) & ![X] : (q(X) => r(X)) & p(a)) => r(a))).
-
 fof(transitivity_predicates, conjecture, ((![X, Y, Z] : ((r(X, Y) & r(Y, Z)) => r(X, Z)) & r(a, b) & r(b, c)) => r(a, c))).
-
 fof(surjective_trap, conjecture, (![X] : ?[Y] : p(X, Y) => ![Z] : ?[W] : p(Z, W))).
-
-fof(php3, conjecture, (
-    ((p11 | p12 | p13) & (p21 | p22 | p23) & (p31 | p32 | p33) & (p41 | p42 | p43))
-    =>
-    (
-        (p11 & p21) | (p11 & p31) | (p11 & p41) | (p21 & p31) | (p21 & p41) | (p31 & p41) |
-        (p12 & p22) | (p12 & p32) | (p12 & p42) | (p22 & p32) | (p22 & p42) | (p32 & p42) |
-        (p13 & p23) | (p13 & p33) | (p13 & p43) | (p23 & p33) | (p23 & p43) | (p33 & p43)
-    )
-)).
-
-fof(graph_colouring, conjecture,
-  (((r1 | g1 | b1) & (r2 | g2 | b2) & (r3 | g3 | b3)) &
-   (~(r1 & r2)) & (~(g1 & g2)) & (~(b1 & b2)) &
-   (~(r1 & r3)) & (~(g1 & g3)) & (~(b1 & b3)) &
-   (~(r2 & r3)) & (~(g2 & g3)) & (~(b2 & b3)))
-  =>
-  ((r1 | g1 | b1) & (r2 | g2 | b2) & (r3 | g3 | b3))).
-
-fof(distribution, conjecture,
-  (((p1 | p2) & (p3 | p4) & (p5 | p6) & (p7 | p8)) =>
-   ((p1 | p2) & (p3 | p4) & (p5 | p6) & (p7 | p8)))).
-
-fof(php32, conjecture,
-  ((((p11 | p12) & (p21 | p22)) & (p31 | p32)) &
-   (~(p11 & p21)) & (~(p11 & p31)) & (~(p21 & p31)) &
-   (~(p12 & p22)) & (~(p12 & p32)) & (~(p22 & p32)))
-  => false).
-
-fof(disj_chain, conjecture,
-  ((((((a | b) & (b | c)) & (c | d)) & (d | e)) & ~b & ~c & ~d) => (a & e))).
-
-fof(case_split, conjecture,
-  ((((p | q) & (r | s)) & ((p => t) & (q => t)) & ((r => u) & (s => u))) => (t & u))).
-
-fof(nested_disj, conjecture,
-  (((((p | q) | r) & ((s | t) | u)) & ((p => z) & (q => z) & (r => z)) & ((s => z) & (t => z) & (u => z))) => z)).
-
-fof(resolution_stress, conjecture,
-  ((((((p1 | p2) & (p3 | p4)) & ((p5 | p6) & (p7 | p8))) &
-    ((~p1 | p3) & (~p2 | p4))) &
-    ((~p3 | p5) & (~p4 | p6))) => (p5 | p6 | p7 | p8))).
-
-fof(php43, conjecture,
- ((((p11|p12|p13)&(p21|p22|p23))&(p31|p32|p33))&(p41|p42|p43))
- &(~(p11&p21))&(~(p11&p31))&(~(p11&p41))
- &(~(p21&p31))&(~(p21&p41))&(~(p31&p41))
- &(~(p12&p22))&(~(p12&p32))&(~(p12&p42))
- &(~(p22&p32))&(~(p22&p42))&(~(p32&p42))
- &(~(p13&p23))&(~(p13&p33))&(~(p13&p43))
- &(~(p23&p33))&(~(p23&p43))&(~(p33&p43))
- =>false).
+fof(php3, conjecture, (((p11 | p12 | p13) & (p21 | p22 | p23) & (p31 | p32 | p33) & (p41 | p42 | p43)) => ((p11 & p21) | (p11 & p31) | (p11 & p41) | (p21 & p31) | (p21 & p41) | (p31 & p41) | (p12 & p22) | (p12 & p32) | (p12 & p42) | (p22 & p32) | (p22 & p42) | (p32 & p42) | (p13 & p23) | (p13 & p33) | (p13 & p43) | (p23 & p33) | (p23 & p43) | (p33 & p43)))).
+fof(graph_colouring, conjecture, (((r1 | g1 | b1) & (r2 | g2 | b2) & (r3 | g3 | b3)) & (~(r1 & r2)) & (~(g1 & g2)) & (~(b1 & b2)) & (~(r1 & r3)) & (~(g1 & g3)) & (~(b1 & b3)) & (~(r2 & r3)) & (~(g2 & g3)) & (~(b2 & b3))) => ((r1 | g1 | b1) & (r2 | g2 | b2) & (r3 | g3 | b3))).
+fof(distribution, conjecture, (((p1 | p2) & (p3 | p4) & (p5 | p6) & (p7 | p8)) => ((p1 | p2) & (p3 | p4) & (p5 | p6) & (p7 | p8)))).
+fof(php32, conjecture, ((((p11 | p12) & (p21 | p22)) & (p31 | p32)) & (~(p11 & p21)) & (~(p11 & p31)) & (~(p21 & p31)) & (~(p12 & p22)) & (~(p12 & p32)) & (~(p22 & p32))) => false).
+fof(disj_chain, conjecture, ((((((a | b) & (b | c)) & (c | d)) & (d | e)) & ~b & ~c & ~d) => (a & e))).
+fof(case_split, conjecture, ((((p | q) & (r | s)) & ((p => t) & (q => t)) & ((r => u) & (s => u))) => (t & u))).
+fof(nested_disj, conjecture, (((((p | q) | r) & ((s | t) | u)) & ((p => z) & (q => z) & (r => z)) & ((s => z) & (t => z) & (u => z))) => z)).
+fof(resolution_stress, conjecture, ((((((p1 | p2) & (p3 | p4)) & ((p5 | p6) & (p7 | p8))) & ((~p1 | p3) & (~p2 | p4))) & ((~p3 | p5) & (~p4 | p6))) => (p5 | p6 | p7 | p8))).
+fof(php43, conjecture, (((((p11|p12|p13)&(p21|p22|p23))&(p31|p32|p33))&(p41|p42|p43)) & (~(p11&p21))&(~(p11&p31))&(~(p11&p41)) & (~(p21&p31))&(~(p21&p41))&(~(p31&p41)) & (~(p12&p22))&(~(p12&p32))&(~(p12&p42)) & (~(p22&p32))&(~(p22&p42))&(~(p32&p42)) & (~(p13&p23))&(~(p13&p33))&(~(p13&p43)) & (~(p23&p33))&(~(p23&p43))&(~(p33&p43))) => false).
+fof(pel1, conjecture, ((p => q) => (~q => ~p))).
+fof(pel2, conjecture, (~~p => p)).
+fof(pel3, conjecture, (~(p => q) => (q => p))).
+fof(pel5, conjecture, (((p | q) => (p | r)) => (p | (q => r)))).
+fof(pel6, conjecture, (p | ~p)).
+fof(pel7, conjecture, (p | ~ ~ ~ p)).
+fof(pel8, conjecture, (((p => q) => p) => p)).
+fof(pel9, conjecture, ((((p1 | p2) & (~p1 | p2)) & (p1 | ~p2)) => ~(~p1 | ~p2))).
+fof(pel18, conjecture, ? [Y] : ! [X] : ( big_f(Y) => big_f(X) )).
+fof(pel19, conjecture, ? [X] : ! [Y,Z] : ( ( big_p(Y) => big_q(Z) ) => ( big_p(X) => big_q(X) ) )).
+fof(pel20, conjecture, ( ! [X,Y] : ? [Z] : ! [W] : ( ( big_p(X) & big_q(Y) ) => ( big_r(Z) & big_s(W) ) ) => ? [X1,Y1] : ( ( big_p(X1) & big_q(Y1) ) => ? [Z1] : big_r(Z1) ) )).
+fof(main, conjecture, ~ ? [X] : ~ ( $false | $false )).
+fof(prop1, conjecture, (p => (q => p))).
+fof(prop2, conjecture, ((p => (q => r)) => ((p => q) => (p => r)))).
+fof(prop3, conjecture, (~p => (p => q))).
+fof(prop4, conjecture, ((~q => ~p) => (p => q))).
+fof(prop5, conjecture, (p => (p | q))).
+fof(prop6, conjecture, ((p & q) => q)).
+fof(prop7, conjecture, (~~p => p)).
+fof(prop8, conjecture, ((p => q) => (~q => ~p))).
+fof(prop9, conjecture, ((p | p) => p)).
+fof(prop10, conjecture, (p => (q => (p & q)))).
+fof(fol1, conjecture, (![X]: p(X) => ?[X]: p(X))).
+fof(fol2, conjecture, (![X]: (p(X) => q(X)) => (![X]: p(X) => ! [Y]: q(Y)))).
+fof(fol3, conjecture, (?[X]: ! [Y]: r(X, Y) => ! [Y]: ?[X]: r(X, Y))).
+fof(fol4, conjecture, (![X]: ~p(X) => ~?[X]: p(X))).
+fof(fol6, conjecture, (p(a) => ?[X]: (p(X) | q(X)))).
+fof(fol7, conjecture, (![X]: (p(X) & q(X)) => (![X]: p(X) & ! [X]: q(X)))).
+fof(fol8, conjecture, (?[X]: (p(X) | q(X)) => (?[X]: p(X) | ?[X]: q(X)))).
+fof(fol9, conjecture, (![X]: p(X) => p(f(a)))).
+fof(fol10, conjecture, (?[X]: p(f(X)) => ?[Y]: p(Y))).
+fof(comb1, conjecture, ((p | (q & r)) => ((p | q) & (p | r)))).
+fof(comb2, conjecture, (((p | q) & (p | r)) => (p | (q & r)))).
+fof(comb3, conjecture, (~(p & q) => (~p | ~q))).
+fof(comb4, conjecture, ((~p | ~q) => ~(p & q))).
+fof(comb5, conjecture, ((p => q) => ((q => r) => (p => r)))).
+fof(comb6, conjecture, (p => (q => (r => (p & q & r))))).
+fof(comb7, conjecture, (![X]: (p(X) => ~q(X)) => ~?[X]: (p(X) & q(X)))).
+fof(comb8, conjecture, (?[X]: (p(X) => q(X)) => (![X]: p(X) => ?[X]: q(X)))).
+fof(comb9, conjecture, (?[X]: p(X) => ?[Y]: p(Y))).
+fof(comb10, conjecture, (![X]: p(X) => (p(a) & p(b) & p(c)))).
+fof(stress1, conjecture, ((![X]: (p(X) => q(X)) & ![X]: (q(X) => r(X))) => ! [X]: (p(X) => r(X)))).
+fof(stress2, conjecture, (?[X]: (p(X) & ! [Y]: (q(Y) => r(X, Y))) => ?[X]: (p(X) & ! [Y]: (~r(X, Y) => ~q(Y))))).
+fof(stress3, conjecture, (![X]: ?[Y]: (p(X) => q(Y)) => (?[X]: p(X) => ?[Y]: q(Y)))).
+fof(stress4, conjecture, (![X]: (p(X) => (q(X) | r(X))) => (![X]: (p(X) & ~q(X)) => ! [X]: r(X)))).
+fof(stress5, conjecture, (?[X]: ! [Y]: p(X, Y) => ! [Y]: ?[X]: p(X, Y))).
+fof(stress7, conjecture, ((![X]: p(X, X) & ! [X, Y, Z]: ((p(X, Y) & p(Y, Z)) => p(X, Z))) => ! [X, Y]: (p(X, Y) => p(X, Y)))).
+fof(pel_extra1, conjecture, (?[X]: p(X) => ! [Y]: (q(Y) => p(X)))).
+fof(pel_extra2, conjecture, (![X]: (p(X) => q) => (?[X]: p(X) => q))).
+fof(pel_extra3, conjecture, (![X]: (p => q(X)) => (p => ! [X]: q(X)))).
+fof(pel_extra4, conjecture, (?[X]: (p(X) => q) => (![X]: p(X) => q))).
+fof(pel_extra5, conjecture, (?[X]: (p => q(X)) => (p => ?[X]: q(X)))).
+fof(pel_extra6, conjecture, (![X, Y]: p(X, Y) => ! [Y, X]: p(X, Y))).
+fof(pel_extra7, conjecture, (?[X, Y]: p(X, Y) => ?[Y, X]: p(X, Y))).
+fof(pel_extra8, conjecture, (![X]: (p(X) & q(a)) => (![X]: p(X) & q(a)))).
+fof(pel_extra9, conjecture, (?[X]: ! [Y]: (p(X) => p(Y)))).
+fof(pel_extra10, conjecture, (![X]: p(X) => ! [Y]: p(f(Y)))).
+fof(new1, conjecture, (p => (q => q))).
+fof(new2, conjecture, ((p & (p => q)) => q)).
+fof(new3, conjecture, ((p | q) => (~p => q))).
+fof(new4, conjecture, (~(~p | ~q) => (p & q))).
+fof(new5, conjecture, ((p => q) => ((~q) => (~p)))).
+fof(new6, conjecture, ((p & (q | r)) => ((p & q) | (p & r)))).
+fof(new7, conjecture, (((p & q) | (p & r)) => (p & (q | r)))).
+fof(new8, conjecture, ((p => (q => r)) => (q => (p => r)))).
+fof(new10, conjecture, ((p & (p => q)) => (p & q))).
+fof(new11, conjecture, (![X]: (p(X) => p(X)))).
+fof(new12, conjecture, (?[X]: (p(X) | ~p(X)))).
+fof(new13, conjecture, (![X]: (p(X) => q(X)) => (![X]: p(X) => ?[X]: q(X)))).
+fof(new14, conjecture, (![X]: (p(X) & q(X)) => ?[X]: p(X))).
+fof(new15, conjecture, (?[X]: (p(X) & q(X)) => ?[X]: p(X))).
+fof(new16, conjecture, (![X]: (p(X) => q(X)) & ![X]: p(X) => ![X]: q(X))).
+fof(new17, conjecture, (![X]: (p(X) => q(X)) & ?[X]: p(X) => ?[X]: q(X))).
+fof(new18, conjecture, (?[X]: (p(X) => q(X)) => (![X]: p(X) => ?[X]: q(X)))).
+fof(new19, conjecture, (![X]: (p(X) => q) => (?[X]: p(X) => q))).
+fof(new20, conjecture, (?[X]: (p(X) => q) => (![X]: p(X) => q))).
+fof(new21, conjecture, (![X]: (p(X) => r(X)) & ![X]: (q(X) => r(X)) => ![X]: ((p(X) | q(X)) => r(X)))).
+fof(new22, conjecture, (![X]: (p(X) => q(X)) => (~?[X]: q(X) => ~?[X]: p(X)))).
+fof(new23, conjecture, (![X]: (p(X) & q(X)) => (![X]: p(X) & ![X]: q(X)))).
+fof(new24, conjecture, (![X]: p(X) => (![Y]: p(Y)))).
+fof(new25, conjecture, (?[X]: p(X) => (?[Y]: p(Y)))).
+fof(new26, conjecture, (![X]: p(X) => p(f(f(a))))).
+fof(new27, conjecture, (?[X]: p(f(X)) => ?[Y]: p(f(Y)))).
+fof(new28, conjecture, (![X]: (p(X) => q(f(X))) & p(a) => q(f(a)))).
+fof(new29, conjecture, (![X]: (p(X) => q(X)) => (![X]: ~q(X) => ![X]: ~p(X)))).
+fof(new30, conjecture, (~?[X]: p(X) => ![X]: ~p(X))).
+fof(new31, conjecture, (![X]: ~p(X) => ~?[X]: p(X))).
+fof(new33, conjecture, (![X]: (p(X) => q(X)) => (![X]: p(X) => ![X]: q(X)))).
+fof(new34, conjecture, (?[X]: p(X) & ![X]: (p(X) => q(X)) => ?[X]: q(X))).
+fof(new35, conjecture, (![X]: (p(X) => q(X)) & ?[X]: (p(X) & r(X)) => ?[X]: (q(X) & r(X)))).
+fof(new36, conjecture, (![X,Y]: (r(X,Y) => s(X,Y)) & r(a,b) => s(a,b))).
+fof(new37, conjecture, (![X,Y]: (r(X,Y) => s(Y,X)) & r(a,b) => s(b,a))).
+fof(new38, conjecture, (![X]: ?[Y]: r(X,Y) => ?[Y]: ?[X]: r(X,Y))).
+fof(new39, conjecture, (?[X]: ![Y]: r(X,Y) => ![Y]: ?[X]: r(X,Y))).
+fof(new40, conjecture, (![X]: ?[Y]: r(X,Y) => ![Z]: ?[W]: r(Z,W))).
+fof(new41, conjecture, (![X]: (p(X) => q(X)) & ![X]: (q(X) => r(X)) => ![X]: (p(X) => r(X)))).
+fof(new42, conjecture, (p => (q => (r => p)))).
+fof(new43, conjecture, ((p => q) => ((q => r) => (p => r)))).
+fof(new44, conjecture, ((p | q) & (~p | r) => (q | r))).
+fof(new45, conjecture, ((p & (q | r)) => ((p & q) | (p & r)))).
+fof(new46, conjecture, (~(p & q) => (~p | ~q))).
+fof(new47, conjecture, ((~p | ~q) => ~(p & q))).
+fof(new48, conjecture, (~(p | q) => (~p & ~q))).
+fof(new49, conjecture, ((~p & ~q) => ~(p | q))).
+fof(new50, conjecture, (p => (q => (p & q)))).
+fof(new51, conjecture, ((p & q) => p)).
+fof(new52, conjecture, ((p & q) => q)).
+fof(new53, conjecture, (p => (p | q))).
+fof(new54, conjecture, (q => (p | q))).
+fof(new55, conjecture, ((p => r) & (q => r) => ((p | q) => r))).
+fof(new56, conjecture, ((p => q) & (~p => q) => q)).
+fof(new57, conjecture, ((p => q) & (p => r) => (p => (q & r)))).
+fof(new58, conjecture, ((p => (q & r)) => ((p => q) & (p => r)))).
+fof(new59, conjecture, ((p | (q & r)) => ((p | q) & (p | r)))).
+fof(new60, conjecture, (((p | q) & (p | r)) => (p | (q & r)))).
+fof(new61, conjecture, (![X]: (p(X) => q(X)) & ![X]: p(X) => ![X]: q(X))).
+fof(new62, conjecture, (![X]: (p(X) => q(X)) & ?[X]: p(X) => ?[X]: q(X))).
+fof(new63, conjecture, (![X]: (p(X) & q(X)) => ?[X]: p(X))).
+fof(new64, conjecture, (?[X]: (p(X) & q(X)) => ?[X]: q(X))).
+fof(new65, conjecture, (![X]: (p(X) => q(X)) => (~?[X]: q(X) => ~?[X]: p(X)))).
+fof(new66, conjecture, (?[X]: p(X) => ?[Y]: p(Y))).
+fof(new67, conjecture, (![X]: p(X) => p(a))).
+fof(new68, conjecture, (p(a) => ?[X]: p(X))).
+fof(new69, conjecture, (![X]: (p(X) => q(X)) & p(a) => q(a))).
+fof(new70, conjecture, (![X]: (p(X) => q(X)) & q(a) => ?[X]: q(X))).
+fof(new71, conjecture, (~?[X]: (p(X) & q(X)) => ![X]: (p(X) => ~q(X)))).
+fof(new72, conjecture, (![X]: (p(X) => ~q(X)) => ~?[X]: (p(X) & q(X)))).
+fof(new73, conjecture, (?[X]: (p(X) | q(X)) => (?[X]: p(X) | ?[X]: q(X)))).
+fof(new74, conjecture, (![X]: (p(X) & q(X)) => (![X]: p(X) & ![X]: q(X)))).
+fof(new75, conjecture, (![X]: p(X) => (![X]: p(X) & ![X]: p(X)))).
+fof(new76, conjecture, ((p => q) & (q => r) => (p => r))).
+fof(new77, conjecture, ((p => q) => ((~q) => (~p)))).
+fof(new78, conjecture, (p | ~p)).
+fof(new79, conjecture, (~(~p) => p)).
+fof(new80, conjecture, (p => ~~p)).
+fof(new81, conjecture, ((p => (q => r)) => ((p => q) => (p => r)))).
+fof(new82, conjecture, ((p => q) => ((p => ~q) => ~p))).
+fof(new83, conjecture, ((p | q) & (~p | r) => (q | r))).
+fof(new84, conjecture, ((p & q) => (q & p))).
+fof(new85, conjecture, ((p | q) => (q | p))).
+fof(new86, conjecture, (![X,Y,Z]: ((r(X,Y) & r(Y,Z)) => r(X,Z)) & r(a,b) & r(b,c) => r(a,c))).
+fof(new87, conjecture, (![X]: ?[Y]: r(X,Y) => ?[Y]: ?[X]: r(X,Y))).
+fof(new88, conjecture, (?[X]: ![Y]: r(X,Y) => ![Y]: ?[X]: r(X,Y))).
+fof(new89, conjecture, (![X]: ?[Y]: p(X,Y) => ![Z]: ?[W]: p(Z,W))).
+fof(new90, conjecture, (![X]: p(X) => ?[X]: p(X))).
+fof(new91, conjecture, ((p & (p => q)) => q)).
+fof(new92, conjecture, ((p => q) & (q => r) => (p => r))).
+fof(new94, conjecture, ((p & q) => (p | q))).
+fof(new95, conjecture, ((p | (q & r)) => ((p | q) & (p | r)))).
+fof(new96, conjecture, (((p | q) & (~p)) => q)).
+fof(new97, conjecture, (((p | q) & (~q)) => p)).
+fof(new98, conjecture, ((p => r) & (q => r) & (p | q) => r)).
+fof(new99, conjecture, ((p => q) & (~p => q) => q)).
+fof(new100, conjecture, ((p => q) => ((~q) => (~p)))).
+fof(u1, conjecture, (p & ~p)).
+fof(u2, conjecture, ((p => q) & p & ~q)).
+fof(u3, conjecture, ((p | q) & ~p & ~q)).
+fof(u4, conjecture, (![X]: p(X) & ~p(a))).
+fof(u5, conjecture, (?[X]: p(X) & ![X]: ~p(X))).
+fof(u6, conjecture, ((p => q) & (q => r) & p & ~r)).
+fof(u7, conjecture, ((p => q) & (~q) & p)).
+fof(u8, conjecture, (![X]: (p(X) => q(X)) & p(a) & ~q(a))).
+fof(u9, conjecture, ((p | q) & (~p) & (~q))).
+fof(u10, conjecture, (~(p | q) & (p | q))).
+fof(u11, conjecture, (~(p & q) & (p & q))).
+fof(u12, conjecture, (![X]: p(X) & ?[X]: ~p(X))).
+fof(u13, conjecture, ((p => q) & (q => p) & p & ~q)).
+fof(u14, conjecture, ((p => q) & (~q) & (p | r) & ~r)).
+fof(u15, conjecture, ((p & q) & (~p | ~q))).
+fof(u16, conjecture, (![X]: (p(X) => q(X)) & ![X]: p(X) & ?[X]: ~q(X))).
+fof(u17, conjecture, ((p => q) & (~p => q) & ~q)).
+fof(e1, conjecture, (p => p)).
+fof(e2, conjecture, ((p & q) => p)).
+fof(e3, conjecture, ((p & q) => q)).
+fof(e4, conjecture, (p => (q => p))).
+fof(e5, conjecture, (p => (p | q))).
+fof(e6, conjecture, ((p | q) => (q | p))).
+fof(e7, conjecture, ((p & q) => (q & p))).
+fof(e8, conjecture, (p | ~p)).
+fof(e9, conjecture, (~~p => p)).
+fof(e10, conjecture, (p => ~~p)).
+fof(m1, conjecture, ((p => q) => (~q => ~p))).
+fof(m2, conjecture, (((p => q) & (q => r)) => (p => r))).
+fof(m3, conjecture, (((p | q) & ~p) => q)).
+fof(m4, conjecture, (((p => r) & (q => r)) => ((p | q) => r))).
+fof(m5, conjecture, (((p => q) & (~p => q)) => q)).
+fof(m6, conjecture, ((p => (q => r)) => (q => (p => r)))).
+fof(m7, conjecture, ((p & (q | r)) => ((p & q) | (p & r)))).
+fof(m8, conjecture, (((p & q) | (p & r)) => (p & (q | r)))).
+fof(m9, conjecture, ((~p | ~q) => ~(p & q))).
+fof(m10, conjecture, (~(p & q) => (~p | ~q))).
+fof(f1, conjecture, (![X]: p(X) => p(a))).
+fof(f2, conjecture, (p(a) => ?[X]: p(X))).
+fof(f3, conjecture, (![X]: p(X) => ?[X]: p(X))).
+fof(f4, conjecture, (?[X]: p(X) => ?[Y]: p(Y))).
+fof(f5, conjecture, (![X]: (p(X) => p(X)))).
+fof(fm1, conjecture, (![X]: (p(X) => q(X)) & p(a) => q(a))).
+fof(fm2, conjecture, (![X]: (p(X) => q(X)) => (![X]: p(X) => ![X]: q(X)))).
+fof(fm3, conjecture, (![X]: (p(X) & q(X)) => (![X]: p(X) & ![X]: q(X)))).
+fof(fm4, conjecture, (~?[X]: p(X) => ![X]: ~p(X))).
+fof(fm5, conjecture, (![X]: ~p(X) => ~?[X]: p(X))).
+fof(fm6, conjecture, (?[X]: (p(X) & q(X)) => ?[X]: p(X))).
+fof(fm7, conjecture, (![X]: (p(X) => q(X)) & ?[X]: p(X) => ?[X]: q(X))).
+fof(fm8, conjecture, (![X]: (p(X) => q(X)) => (~?[X]: q(X) => ~?[X]: p(X)))).
+fof(fm9, conjecture, (?[X]: (p(X) | q(X)) => (?[X]: p(X) | ?[X]: q(X)))).
+fof(fm10, conjecture, (![X]: (p(X) => q) => (?[X]: p(X) => q))).
