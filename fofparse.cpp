@@ -24,24 +24,6 @@ struct Result {
     int peakDepth;
 };
 
-/*
-void writeCSV(const std::vector<Result>& improved,
-              const std::string& filename) {
-    
-                std::ofstream out(filename);
-    // Header
-    out << "Problem,"
-        << "Improved Result,Improved Time(ms),Improved Nodes,Improved PeakDepth\n";
-
-    for (size_t i = 0; i < improved.size(); i++) {
-        const auto& b = improved[i];
-        
-        out << "\"" << b.problem << "\","
-            << (b.proved  ? "Proved" : "Failed") << "," << b.timeMs  << "," << b.nodes  << "," << b.peakDepth << "\n";
-    }
-    std::cout << "CSV written to: " << filename << std::endl;
-}
-*/
 //----------------------------------PARSER-------------------------------------
 
 enum class NodeType {
@@ -61,18 +43,15 @@ struct Node {
         return count;
     }
 
-    //Helper for Atoms: p(X, Y)
-    Node(NodeType t, std::string n) : type(t), name(n) {}
-    
-    //Helper for unary/binary
-    Node(NodeType t, std::shared_ptr<Node> left, std::shared_ptr<Node> right = nullptr)
+    Node(NodeType t, std::string n) : type(t), name(n) {} //helper for atoms
+       
+    Node(NodeType t, std::shared_ptr<Node> left, std::shared_ptr<Node> right = nullptr) // unary/binary helper
         : type(t) {
         children.push_back(left);
         if (right) children.push_back(right);
         }
     
-    //Quantifier Constructor
-    Node(NodeType t, std::string n, std::shared_ptr<Node> body) 
+    Node(NodeType t, std::string n, std::shared_ptr<Node> body) //quantifier constructor
         : type(t), name(n) {
         children.push_back(body);
     }
@@ -121,9 +100,9 @@ class Lexer {
     size_t pos = 0;
 public: 
     Lexer(std::string s) : input(s) {}
+    
     Token nextToken() {
-        //skip whitespace
-        while(pos < input.length() && isspace(input[pos])) pos++;
+        while(pos < input.length() && isspace(input[pos])) pos++;         //skip whitespace
         if(pos >= input.length()) return { Token::END, ""};
     
         if (isdigit(input[pos])) {
@@ -131,7 +110,7 @@ public:
             while (pos < input.length() && isdigit(input[pos])) {
                 val += input[pos++];
             }
-            return {Token::ID, val}; // Treat numbers as IDs for simplicity
+            return {Token::ID, val}; // treat numbers as IDs for simplicity
         }
 
         if(pos < input.length() && input[pos] == '%') {
@@ -139,8 +118,7 @@ public:
             return nextToken(); // recurse to get the next real token
         }
 
-        //check multi-char symbols
-        if(pos + 1 < input.length() && input.substr(pos, 2) == "=>"){
+        if(pos + 1 < input.length() && input.substr(pos, 2) == "=>"){     //check multi-char symbols
             pos += 2;
             return {Token::IMPLY, "=>" };
         }
@@ -151,11 +129,10 @@ public:
             while (pos < input.length() && (isalnum(input[pos]) || input[pos] == '_')) {
                 value += input[pos++];
             }
-        return {Token::ID, value}; // returns "false" or "true" as a plain ID
+        return {Token::ID, value}; // returns false/true as a plain ID
         }
 
-        //check single-char symbols 
-        char c = input[pos];
+        char c = input[pos];         //check single-char symbols 
         switch (c) {
             case '(': pos++; return { Token::LPAREN, "("};
             case ')': pos++; return { Token::RPAREN, ")"};
@@ -170,18 +147,15 @@ public:
             case ',': pos++; return { Token::COMMA, ","};
             case '.': pos++; return { Token::PERIOD, "."};
         }
-        //check identifiers
-        if(isalnum(c) || c == '_') {
+       
+        if(isalnum(c) || c == '_') {  //check identifiers
             std::string value = "";
             while (pos < input.length() && (isalnum(input[pos]) || input[pos] == '_')) {
                 value += input[pos++];
             }
-            //Rule: start with uppercase = variable
-            if (isupper(value[0])) return {Token::VAR, value};
-            //Rule: "fof" is keyword
-            if (value == "fof") return {Token::FOF, value};
-            //otherwise it's a predicate/constant ID
-            return {Token::ID, value};
+            if (isupper(value[0])) return {Token::VAR, value};     //start with uppercase = variable   
+            if (value == "fof") return {Token::FOF, value};  //fof is keyword
+            return {Token::ID, value};             //otherwise predicate/constant ID
         }
             pos++; 
             return { Token::END, "ERROR" };
@@ -191,20 +165,20 @@ public:
 // Parser
 
 class Parser {
-    std::vector<Token> tokens;
+    std::vector<Token> tokens;   
     size_t current = 0;
-    //Node(NodeType t);
-    Token peek() {return tokens[current]; }
-    Token advance() {return tokens[current++]; }
-    
+    Token peek() {return tokens[current]; }   
+    Token advance() {return tokens[current++]; }  
     Token match(Token::Type type) {
         if (peek().type == type) return advance();
         throw std::runtime_error("Unexpected Token");
     }
+
 public:
     Parser(std::vector<Token> t) : tokens(t) {}
     //precedence
     std::shared_ptr<Node> parseFormula() {return parseImplication();}
+    
     std::shared_ptr<Node> parseImplication() {
         auto left = parseDisjunction(); //step down to higher priority
         while (peek().type == Token::IMPLY) {
@@ -214,6 +188,7 @@ public:
         }
         return left;
         };
+    
     std::shared_ptr<Node> parseDisjunction() {
         auto left = parseConjunction();
         while (peek().type == Token::OR) {
@@ -223,6 +198,7 @@ public:
         }
         return left;
         };
+    
     std::shared_ptr<Node> parseConjunction() {
         auto left = parseUnary();
         while (peek().type == Token::AND) {
@@ -232,13 +208,14 @@ public:
         }
         return left;
         };
- 
+    
     std::shared_ptr<Node> buidNestedQuantifier(NodeType type, std::vector<std::string>& vars, std::shared_ptr<Node> body) {
         for (auto it = vars.rbegin(); it != vars.rend(); ++it) {
             body = std::make_shared<Node>(type, *it, body);
         }
         return body;
     }
+    
     std::shared_ptr<Node> parseTopLevel(std::string& outRole) {
         match(Token::FOF); 
         match(Token::LPAREN);
@@ -256,7 +233,7 @@ public:
         match(Token::PERIOD);
         return formula;
     } 
-    //Parsing Quantifiers
+    
     std::shared_ptr<Node> parseQuantifier() {
         auto type = (peek().type == Token::FORALL) ? NodeType::FORALL : NodeType::EXISTS;
         advance(); //consume ! or ? 
@@ -272,6 +249,7 @@ public:
 
         return buidNestedQuantifier(type, vars, parseFormula());
     };
+    
     std::shared_ptr<Node> parseUnary() {
         if (peek().type == Token::NOT) {
             advance();
@@ -288,6 +266,7 @@ public:
         }
         return parseAtom();
         };
+    
     std::shared_ptr<Node> parseAtom() {
         Token t = match(Token::ID);
         auto node = std::make_shared<Node>(NodeType::ATOM, t.value);
@@ -306,6 +285,7 @@ public:
         }
         return node;
         };
+    
     bool isAtEnd() const {
         return tokens[current].type == Token::END;
     }
@@ -328,9 +308,8 @@ struct Sequent {
         }
         return true;
     }
-
-    //check if atom exists on both sides (ID/closure)
-    bool isClosed() const {
+    
+    bool isClosed() const {  //check if atom exists on both sides (ID/closure)
         for (const auto& a: antecedent) {
             if(a->type != NodeType::ATOM) continue;
             for (const auto& s : succedent) {
@@ -339,7 +318,7 @@ struct Sequent {
             }
         return false;
     }
-
+    
     std::set<std::string> getExistingTerms() const{
         std::set<std::string> terms;
         std::function<void(std::shared_ptr<Node>)> find = [&](std::shared_ptr<Node> n){
@@ -358,7 +337,7 @@ struct Sequent {
         for (auto& f : succedent) find(f);
         return terms;
     }
-
+    
     std::shared_ptr<Node> pushNegation(std::shared_ptr<Node> node) {
         if (!node) return nullptr;
 
@@ -434,6 +413,7 @@ struct Sequent {
         f = pushNegation(f);
     }
 }
+    
     bool hasNegatedQuantifier(std::shared_ptr<Node> node) {
         if (!node) return false;
         if (node->type == NodeType::NOT && !node->children.empty()) {
@@ -458,38 +438,20 @@ public:
     using UsedRegistry = std::map<std::shared_ptr<Node>, std::set<std::string>>;
     bool prove(Sequent s, UsedRegistry used, Stats& stats, int depth = 0){
         //--------------------------------------Closing Rules ---------------------------------------
-            
-  //  std::cout << "Checking closure - Antecedent atoms: ";
- //   for (auto& f : s.antecedent) {
- //       if (f->type == NodeType::ATOM)
- //           std::cout << "'" << f->name << "'(children:" << f->children.size() << ") ";
- //   }
- //   std::cout << "\nSuccedent atoms: ";
- //   for (auto& f : s.succedent) {
- //       if (f->type == NodeType::ATOM)
- //           std::cout << "'" << f->name << "'(children:" << f->children.size() << ") ";
- //   }
-//std::cout << std::endl;
-
 
         stats.nodesExplored++;
         
         stats.peakDepth = std::max(stats.peakDepth, depth);
-        //Base case: ID
-        if(s.isClosed()){
-     //       std::cout << "CLOSED via ID" << std::endl;
+        
+        if(s.isClosed()){   //Base case: ID
             return true;
         }
-
-        // Base case: BOTTOM_L (false on the left closes the branch)
-        for (const auto& a : s.antecedent) {
+       
+        for (const auto& a : s.antecedent) {    // Base case: BOTTOM_L
             if (a->type == NodeType::ATOM && a->name == "false") return true;
         }
 
-        //Limit Depth (prevent infinite loops)
-        if (depth > 1000) return false;
-
-        //if (stats.nodesExplored > 800000) return false;
+        if (depth > 1000) return false; //Limit Depth (prevent infinite loops)
 
         //--------------------------------------Non-Branching Rules ---------------------------------
         
@@ -740,19 +702,11 @@ public:
         }
 
         //------------------------------------------------------------------------------------------
-        // EXISTS-R: instantiate with existing unused term
+        // EXISTS-R with existing unused term
         for(size_t i = 0; i < s.succedent.size(); i++) {
             if(s.succedent[i]->type == NodeType::EXISTS){
-       //         std::cout << "Applying EXISTS_R (existing unused term)" << std::endl;
-        //        std::cout << "Antecedent: ";
-         //       for (auto& f : s.antecedent) std::cout << f->toString() << " | ";
-          //      std::cout << "\nSuccedent: ";
-          //      for (auto& f : s.succedent) std::cout << f->toString() << " | ";
-          //      std::cout << std::endl;
-
                 auto terms = s.getExistingTerms();
                 std::string termToUse = "";
-
                 for(const auto& t : terms){
                     if (used[s.succedent[i]].find(t) == used[s.succedent[i]].end()){
                         termToUse = t;
@@ -771,24 +725,19 @@ public:
             }
         }
 
-        // EXISTS-R: fresh term as last resort
+        // EXISTS-R fresh term
         for(size_t i = 0; i < s.succedent.size(); i++) {
             if(s.succedent[i]->type == NodeType::EXISTS){
-                std::cout << "Applying EXISTS_R (fresh)" << std::endl;
-                std::cout << "Antecedent: ";
-                for (auto& f : s.antecedent) std::cout << f->toString() << " | ";
-                std::cout << "\nSuccedent: ";
-                for (auto& f : s.succedent) std::cout << f->toString() << " | ";
-               std::cout << std::endl;
-
                 if(used[s.succedent[i]].size() >= 3) return false;
                 std::string termToUse = getFreshTerm();
                 used[s.succedent[i]].insert(termToUse);
                 Sequent next = s;
                 std::string varName = next.succedent[i]->name;
+                
                 auto body = next.succedent[i]->children[0];
                 next.succedent.erase(next.succedent.begin() + i); // remove quantifier
                 next.succedent.push_back(substitute(body, varName, termToUse)); // add instance only
+                
                 return prove(next, used, stats, depth + 1);
             }
         }
@@ -820,26 +769,22 @@ public:
             }
         }
 
-        // FORALL-L: no unused terms exist, create a fresh term (last resort)
+        // FORALL-L no unused terms exist
         for(size_t i = 0; i < s.antecedent.size(); i++) {
             if (s.antecedent[i]->type == NodeType::FORALL){
-               std::cout << "Applying FORALL_L (fresh)" << std::endl;
-                std::cout << "Antecedent: ";
-                for (auto& f : s.antecedent) std::cout << f->toString() << " | ";
-                std::cout << "\nSuccedent: ";
-               for (auto& f : s.succedent) std::cout << f->toString() << " | ";
-                std::cout << std::endl;
-
-                //if(used[s.antecedent[i]].size() >= 1000) continue;
                 std::string termToUse = getFreshTerm();
                 used[s.antecedent[i]].insert(termToUse);
+               
                 Sequent next = s;
                 std::string varName = next.antecedent[i]->name;
+               
                 auto body = next.antecedent[i]->children[0];
                 next.antecedent.push_back(substitute(body, varName, termToUse));
                 auto quantifier = next.antecedent[i];
+               
                 next.antecedent.erase(next.antecedent.begin() + i);
                 next.antecedent.push_back(quantifier);
+              
                 return prove(next, used, stats, depth + 1);
             }
         }
@@ -850,19 +795,16 @@ public:
     //Helper for substitution
     std::shared_ptr<Node> substitute(std::shared_ptr<Node> node, const std::string& var, const std::string& term) {
         if(!node) return nullptr;
-        //If its the variable we are looking for, replace it
-        if(node->type == NodeType::ATOM && node->name == var && node->children.empty()){
+        if(node->type == NodeType::ATOM && node->name == var && node->children.empty()){    //if variable we are looking for, replace
             return std::make_shared<Node>(NodeType::ATOM, term);
         }
-        //Otherwise clone the node and recurse on children
-        auto newNode = std::make_shared<Node>(node->type, node->name);
+        auto newNode = std::make_shared<Node>(node->type, node->name);      //otherwise clone node and recurse on children
         for (auto& child : node->children) {
             newNode->children.push_back(substitute(child, var, term));
         }
         return newNode;
     }        
 };
-
 
 //--------------------------------MAIN_FUNCTION------------------------------------
 
@@ -883,7 +825,7 @@ int main(int argc, char* argv[]) {
 
     while (std::getline(file, line)){
         if(line.empty() || line[0] == '%') continue;
-        content += line + "\n"; // ← preserve newlines so inline % comments terminate
+        content += line + "\n"; // preserve newlines so inline % comments terminate
     }
 
     Lexer lexer(content);
@@ -898,8 +840,10 @@ int main(int argc, char* argv[]) {
         std::cerr << "Lexer Error: " << e.what() << std::endl;
         return 1;
     }
+    
     int testCount = 0;
     int successCount = 0;
+    
     try {
         Parser parser(tokens);
         while (!parser.isAtEnd()) {
@@ -916,10 +860,8 @@ int main(int argc, char* argv[]) {
                 } else {
                     initial.antecedent.push_back(formula);
                 }
-                //std::cout << "Parsed " << role << " successfully." << std::endl;
             }
         }
-        //std::cout << "Total Axioms: " << initial.antecedent.size() << std::endl;
     } catch (const std::exception& e) {
         std::cerr << "Parser Error: " << e.what() << std::endl;
         return 1;
